@@ -1,0 +1,23 @@
+{
+  "name": "application-architechture",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {
+    "nodemon": "^2.0.12"
+  },
+  "scripts": {
+    "start": "node index",
+    "start:dev": "nodemon index"
+  },
+  "keywords": [],
+  "author": "Samayun Miah Chowdhury",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "jwt-auth-helper": "^1.0.0",
+    "mongoose": "^6.0.4"
+  }
+}
