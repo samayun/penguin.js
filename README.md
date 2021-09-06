@@ -7,10 +7,8 @@ Architect an express.js application
 #### Check List
 
 - [ ] Architechture
-
   - Modular way
-  - Monolithic - Layered Architechture (3 Layer, actually 2 implemented here)
-
+  - Monolithic - Layered Architechture (3 Tier, actually 2 tier implemented here)
 - [ ] Design Patterns
   - [ ] MVC - Model View Controller
   - [ ] Singleton Pattern- global sharable instance suppose one database in whole application
