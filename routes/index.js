@@ -1,6 +1,6 @@
 // import Routes from modules or global place
-const authRoutes = require("../authentication/routes");
-const taskRoutes = require("../task/routes");
+const authRoutes = require("../modules/authentication/routes");
+const taskRoutes = require("../modules/task/routes");
 
 const routes = [
   {
@@ -33,7 +33,7 @@ const routes = [
   {
     name: "newsRoutes",
     type: "module",
-    handler: require("../news/routes"),
+    handler: require("../modules/news/routes"),
   },
   {
     path: "/",

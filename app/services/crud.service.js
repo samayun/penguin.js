@@ -1,4 +1,4 @@
-class NewsService {
+class CrudService {
   constructor(model) {
     this.Model = model;
   }
@@ -20,4 +20,4 @@ class NewsService {
     return await this.Model.findOneAndDelete(keys);
   }
 }
-module.exports = (model) => new NewsService(model);
+module.exports = CrudService;

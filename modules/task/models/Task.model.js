@@ -10,11 +10,11 @@ const modelSchema = new Schema(
       type: String,
       require: true,
     },
-    title: {
+    slug: {
       type: String,
     },
   },
   { timestamps: true }
 );
 
-module.exports = model("Test", modelSchema);
+module.exports = model("Task", modelSchema);

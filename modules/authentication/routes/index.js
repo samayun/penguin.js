@@ -1,7 +1,7 @@
 // require("dotenv").config();
 const router = require("express").Router();
 const { JWT } = require("jwt-auth-helper");
-const authenticate = require("../../app/middlewares/isAuth");
+const authenticate = require("../../../app/middlewares/isAuth");
 const authService = require("../services/authService");
 
 const {

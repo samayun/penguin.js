@@ -1,18 +1,18 @@
 const router = require("express").Router();
 // manual import
-const News = require("../models/News.model");
-const User = require("../../app/models/User.model");
-const newsService = require("../services/news.service")(User);
+const Task = require("../models/Task.model");
+
+const taskService = require("../services/task.service")(Task);
 
 module.exports = (routes) => {
-  routes.use("/api/news", router);
+  routes.use("/api/tasks", router);
 
   router.get("/", async (req, res, next) => {
     try {
       return res.json({
         success: true,
-        message: "Get all news",
-        data: await newsService.getAll(),
+        message: "Get all task",
+        data: await taskService.getAll(),
       });
     } catch (error) {
       next(error);
@@ -23,8 +23,8 @@ module.exports = (routes) => {
     try {
       return res.json({
         success: true,
-        message: "Get all news",
-        data: await newsService.create(req.body),
+        message: "Get all task",
+        data: await taskService.create(req.body),
       });
     } catch (error) {
       next(error);
@@ -35,8 +35,8 @@ module.exports = (routes) => {
     try {
       return res.json({
         success: true,
-        message: "Get all news",
-        data: await newsService.update(req.params.id, req.body),
+        message: "Get all task",
+        data: await taskService.update(req.params.id, req.body),
       });
     } catch (error) {
       next(error);
@@ -48,8 +48,8 @@ module.exports = (routes) => {
       if (req.query.email || req.query._id || req.query.slug) {
         return res.json({
           success: true,
-          message: "Get one news",
-          data: await newsService.getOne(req.query),
+          message: "Get one task",
+          data: await taskService.getOne(req.query),
         });
       }
       return next(new Error("Please send _id,email or other credentials"));
@@ -63,8 +63,8 @@ module.exports = (routes) => {
       if (req.query.email || req.query._id || req.query.slug) {
         return res.json({
           success: true,
-          message: "update one news",
-          data: await newsService.update(req.query, req.body),
+          message: "update one task",
+          data: await taskService.update(req.query, req.body),
         });
       }
       return next(new Error("Please send _id,email or other credentials"));
@@ -78,8 +78,8 @@ module.exports = (routes) => {
       if (req.query.email || req.query._id || req.query.slug) {
         return res.json({
           success: true,
-          message: "Delete one news",
-          data: await newsService.deleteOne(req.query),
+          message: "Delete one task",
+          data: await taskService.deleteOne(req.query),
         });
       }
       return next(new Error("Please send _id,email or other credentials"));

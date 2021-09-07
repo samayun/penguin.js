@@ -1,6 +1,6 @@
 const { BCrypt } = require("jwt-auth-helper");
 // manual import
-const User = require("../../app/models/User.model");
+const User = require("../models/User.model");
 
 class AuthService {
   async register(params) {
