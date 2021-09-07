@@ -1,0 +1,130 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Penguin.js API",
+    "description": "Penguin API Information",
+    "contact": {
+      "name": "Samayun Chowdhury",
+      "url": "https://www.linkedin.com/in/samayun-miah-chowdhury"
+    },
+    "license": {
+      "name": "MIT"
+    }
+  },
+  "host": "http://localhost:5000",
+  "basePath": "/api",
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/auth/login": {
+      "post": {
+        "description": "Returns loggined user data & access_token",
+        "operationId": "loginUser",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "email",
+            "description": "Unique Email",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "description": "At least 6 digit password",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "login response",
+            "schema": {
+              "type": "object",
+              "name": "user",
+              "items": {
+                "$ref": "#/definitions/auth"
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "user": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/User"
+        },
+        {
+          "required": [
+            "_id"
+          ],
+          "properties": {
+            "_id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "response": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/auth"
+        },
+        {
+          "required": [
+            "_id"
+          ],
+          "properties": {
+            "status" : {
+              "type": "string"
+            },
+            "message" : {
+              "type": "string"
+            },
+            "user" : {
+              "type": "object",
+              "allOf": [
+                {
+                  "$ref": "#/definitions/User"
+                }]
+            },
+            "access_token" : {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

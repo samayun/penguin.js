@@ -4,23 +4,6 @@ const taskRoutes = require("../modules/task/routes");
 
 const routes = [
   {
-    name: "All Route List",
-    path: "/routes",
-    handler: (req, res) => {
-      let getAllRoutes = routes.map((route) => {
-        return {
-          name: route.name,
-          path: route.path,
-          routes: generateStacks(route.handler),
-        };
-      });
-      res.json({
-        routes: getAllRoutes,
-        totalRootRoutes: getAllRoutes.length - 2,
-      });
-    },
-  },
-  {
     name: "authRoutes",
     type: "module",
     handler: authRoutes,
@@ -35,6 +18,20 @@ const routes = [
     type: "module",
     handler: require("../modules/news/routes"),
   },
+  {
+    name: "swaggerRoutes",
+    type: "module",
+    handler: require("../modules/swagger/routes"),
+  },
+  /**
+   * @swagger
+   * /:
+   *   get:
+   *     summary: Home Route
+   *     responses:
+   *       200:
+   */
+
   {
     path: "/",
     handler: (req, res) => {
@@ -70,28 +67,6 @@ const routes = [
     },
   },
 ];
-
-const generateMethods = (methods) => {
-  let method = "";
-  for (let key in methods) {
-    if (methods[key] === true) {
-      method = key;
-    }
-  }
-  return method;
-};
-
-const generateStacks = (handler) => {
-  let nestedRoutes = handler.stack;
-  if (nestedRoutes) {
-    return nestedRoutes.map((stack) => ({
-      path: stack.route.path,
-      method: generateMethods(stack.route.methods),
-      structure: stack.route.stack.map((st) => st.name),
-    }));
-  }
-  return null;
-};
 
 module.exports = (app) => {
   routes.forEach((route) => {

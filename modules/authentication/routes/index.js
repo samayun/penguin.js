@@ -13,13 +13,8 @@ const jwt = new JWT(process.env.JWT_SECRET_KEY || "JWT_SECRET_KEY");
 
 module.exports = (routes) => {
   routes.use("/api/auth", router);
-  router.get("/login", async (req, res, next) => {
-    res.json({
-      status: "success",
-      message: `GUEST logged in successfully`,
-    });
-  });
 
+  // POST /api/auth/login
   router.post("/login", loginValidator, async (req, res, next) => {
     try {
       const user = await authService.login({
@@ -41,6 +36,10 @@ module.exports = (routes) => {
     }
   });
 
+  /**
+   *  POST /api/auth/register
+   * { name : "Salman Akash", email: "samu@gmail.com, password: "123456"}
+   *  */
   router.post("/register", registerValidator, async (req, res, next) => {
     try {
       const user = await authService.register(req.body);
@@ -57,7 +56,7 @@ module.exports = (routes) => {
       next(error);
     }
   });
-
+  // GET /api/auth/profile
   router.get("/profile", authenticate, async (req, res, next) => {
     try {
       const user = await authService.profile(req.user.email);
@@ -72,7 +71,7 @@ module.exports = (routes) => {
       next(error);
     }
   });
-
+  // GET /api/auth/users
   router.get("/users", authenticate, async (req, res, next) => {
     try {
       const data = await authService.users();

@@ -9,7 +9,8 @@ class CrudService {
     return await this.Model.findOne(params);
   }
   async create(params) {
-    return await this.Model.create(params);
+    let data = new this.Model(params);
+    return data.save();
   }
   async update(keys, params) {
     return await this.Model.findOneAndUpdate(keys, {

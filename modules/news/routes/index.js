@@ -1,11 +1,13 @@
 const router = require("express").Router();
 // manual import
 const News = require("../models/News.model");
+const { createNewsValidator } = require("../validator/news.validator");
 const newsService = require("../services/news.service")(News);
 
 module.exports = (routes) => {
   routes.use("/api/news", router);
 
+  // GET /api/news
   router.get("/", async (req, res, next) => {
     try {
       return res.json({
@@ -17,19 +19,22 @@ module.exports = (routes) => {
       next(error);
     }
   });
-
-  router.post("/create", async (req, res, next) => {
+  // POST /api/news
+  router.post("/", createNewsValidator, async (req, res, next) => {
     try {
+      let news = new News(req.body);
+      // console.log(news);
+      let data = news.save();
       return res.json({
         success: true,
-        message: "Get all news",
-        data: await newsService.create(req.body),
+        message: "Create a news",
+        data,
       });
     } catch (error) {
       next(error);
     }
   });
-
+  // GET /api/news/update/:id
   router.put("/update/:id", async (req, res, next) => {
     try {
       return res.json({
@@ -41,7 +46,7 @@ module.exports = (routes) => {
       next(error);
     }
   });
-
+  // GET /api/news/show?_id=aeb54 | email=samu@gmail.com | slug=test
   router.get("/show", async (req, res, next) => {
     try {
       if (req.query.email || req.query._id || req.query.slug) {
@@ -56,7 +61,7 @@ module.exports = (routes) => {
       next(error);
     }
   });
-
+  // PUT /api/news/update/?_id=aeb54 | email=samu@gmail.com | slug=test
   router.put("/update", async (req, res, next) => {
     try {
       if (req.query.email || req.query._id || req.query.slug) {
@@ -72,6 +77,7 @@ module.exports = (routes) => {
     }
   });
 
+  // DELETE /api/news/update/?_id=aeb54 | email=samu@gmail.com | slug=test
   router.delete("/delete", async (req, res, next) => {
     try {
       if (req.query.email || req.query._id || req.query.slug) {

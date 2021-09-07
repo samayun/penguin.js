@@ -1,23 +1,29 @@
 {
-  "name": "application-architechture",
+  "name": "penguin-js",
   "version": "1.0.0",
   "main": "index.js",
-  "devDependencies": {
-    "nodemon": "^2.0.12"
-  },
   "scripts": {
     "start": "node index",
     "start:dev": "nodemon index"
   },
-  "keywords": [],
-  "author": "Samayun Miah Chowdhury",
+  "keywords": [
+    "nodejs-framework",
+    "express-framework",
+    "framework"
+  ],
+  "author": "Samayun Miah Chowdhury<samayun.m.chowdhury@gmail.com>",
   "license": "ISC",
-  "description": "",
+  "description": "Penguin is an opinionated express framework provides rapid development facility",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "jwt-auth-helper": "^1.0.0",
-    "mongoose": "^6.0.4"
+    "mongoose": "^6.0.4",
+    "swagger-jsdoc": "^6.1.0",
+    "swagger-ui-express": "^4.1.6"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12"
   }
 }

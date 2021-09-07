@@ -3,6 +3,7 @@ const router = require("express").Router();
 const Task = require("../models/Task.model");
 
 const taskService = require("../services/task.service")(Task);
+const taskService1 = require("../services/task.service")(Task);
 
 module.exports = (routes) => {
   routes.use("/api/tasks", router);
@@ -13,13 +14,14 @@ module.exports = (routes) => {
         success: true,
         message: "Get all task",
         data: await taskService.getAll(),
+        bool: taskService === taskService1,
       });
     } catch (error) {
       next(error);
     }
   });
 
-  router.post("/create", async (req, res, next) => {
+  router.post("/", async (req, res, next) => {
     try {
       return res.json({
         success: true,
