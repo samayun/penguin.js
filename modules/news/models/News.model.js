@@ -50,25 +50,32 @@ async function generateSlug(source) {
 }
 
 modelSchema.pre("save", async (next) => {
-  console.log(await NewsSchema.model(NewsSchema.constructor.modelName).find());
-  console.log(this.title);
+  console.log(this.published);
+  console.log(
+    await modelSchema.model(modelSchema.constructor.modelName).find()
+  );
+
+  // onCreate
   if (this.isNew) {
-    console.log(`TITLE => `, this.title);
     if (this.published === true) {
-      this.draft = null;
+      this.draft = false;
       this.slug = generateSlug(this.title);
     } else {
-      this.draft = true;
+      // this.draft = true;
       this.slug = null;
     }
-  } else {
-    if (!this.slug) {
+  }
+  // onUpdate
+  else {
+    if (!this.slug && this.published === true) {
       this.slug = generateSlug(this.title);
+    } else if (!this.slug && this.published === false) {
+      this.slug = null;
     } else {
-      // this.slug = this.slug;
+      this.slug = this.slug;
     }
   }
-  // next();
+  next();
 });
 const NewsSchema = model("News", modelSchema);
 module.exports = NewsSchema;

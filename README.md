@@ -2,7 +2,7 @@
 
 Architect an express.js application
 
-![NODE.JS](https://d540vms5r2s2d.cloudfront.net/mad/uploads/mad_blog_5c20e26b2f98d1545658987.png)
+![NODE.JS](https://viitorcloud.com/blog/wp-content/uploads/2018/06/Node-JS-App-Development-for-Business-cover.jpg)
 
 ### Check List
 
@@ -25,14 +25,15 @@ Architect an express.js application
 - [ ] Singleton Pattern- global sharable instance suppose one database in whole application
 - [ ] Facade Pattern - multiple database connection with same functionality
 - [x] Service Repository Pattern
-</details>
-<details>
-<summary>
- ➡️ Languages/Framework/Library
-</summary>
+  </details>
+  <details>
+  <summary>
+   ➡️ Languages/Framework/Library
+  </summary>
 
-- Languiage: ↪️ Node.js as JS server side runtime
-- Framework: ↪️ Express.js as web framework
-- Database: ↪️ MongoDB as NoSQL Database
+  - Languiage: ↪️ [Node.js](https://nodejs.org/en) as JS server side runtime
+  - Framework: ↪️ [Express.js](https://expressjs.com) as web framework
+  - Database: ↪️ [MongoDB](https://www.mongodb.com) as NoSQL Database
+  - Documentation: ↪️ [Swagger](https://swagger.io)
 
 </details>
