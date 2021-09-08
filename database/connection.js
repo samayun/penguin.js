@@ -6,7 +6,7 @@ module.exports = async function connectDB() {
     const options = { useNewUrlParser: true, useUnifiedTopology: true };
 
     await mongoose.connect(uri, options);
-    return Promise.resolve(`DB Connected`);
+    return Promise.resolve(`Database Connected`);
   } catch (error) {
     return Promise.reject(error.message);
   }

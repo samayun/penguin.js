@@ -22,13 +22,10 @@ module.exports = (routes) => {
   // POST /api/news
   router.post("/", createNewsValidator, async (req, res, next) => {
     try {
-      let news = new News(req.body);
-      // console.log(news);
-      let data = news.save();
       return res.json({
         success: true,
         message: "Create a news",
-        data,
+        data: await newsService.create(req.body),
       });
     } catch (error) {
       next(error);

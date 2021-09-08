@@ -9,16 +9,19 @@ class CrudService {
     return await this.Model.findOne(params);
   }
   async create(params) {
-    let data = new this.Model(params);
-    return data.save();
+    return await new this.Model(params).save();
   }
   async update(keys, params) {
     return await this.Model.findOneAndUpdate(keys, {
       $set: params,
     });
   }
-  async deleteOne(keys) {
-    return await this.Model.findOneAndDelete(keys);
+  async deleteOne(key) {
+    return await this.Model.findOneAndDelete(key);
+  }
+  async delete(keys) {
+    return await this.Model.findAndDelete(keys);
   }
 }
+
 module.exports = CrudService;

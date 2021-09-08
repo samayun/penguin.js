@@ -1,35 +1,36 @@
-const { Schema, model } = require("mongoose");
+const { model, Schema } = require("mongoose");
+const crypto = require("crypto");
 
-const modelSchema = new Schema({
-  title: {
-    type: String,
-    required: [true, "A News must have a title"],
-    trim: true,
-    // minlength: [10, 'A News Title must have more or equal than 10 characters'],
+const newsSchema = new Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+    },
+    draft: {
+      type: Boolean,
+      default: true,
+    },
+    slug: {
+      source: "title",
+      type: String,
+      slugPaddingSize: 2,
+    },
+    published: {
+      type: Boolean,
+      default: false,
+    },
   },
-  slug: {
-    source: "title",
-    type: String,
-    slugPaddingSize: 2,
-    // unique: true,
-  },
-  published: {
-    type: Boolean,
-    default: false,
-  },
-  draft: {
-    type: Boolean,
-    default: true,
-  },
-});
-async function generateSlug(source) {
-  console.log({ source });
+  { timestamps: true }
+);
+
+function generateSlug(source) {
   let tempSlug = source
     .toString() // make sure the operand is a string
     .toLowerCase() // normalize the string
     .trim() // trim white spaces in the beginning and ending of the string
     .replace(/\s/g, "-") // replace all spaces with a dash
-    .replace(/[&/\\#,+()$~%.‘’'":*?''`!<>{};=@^_|।[\]]/g, "-") // replace all special characters
+    .replace(/[&/\\#,+()$~%.'":*?''`!<>{};=@^_|।[\]]/g, "-") // replace all special characters
     .replace(/-+/g, "-"); // replace any repeated dashes
 
   let slug;
@@ -43,39 +44,40 @@ async function generateSlug(source) {
   } else {
     slug = tempSlug;
   }
-  // return (await modelSchema.model(this.constructor.modelName).exists({ slug }))
-  //   ? `${slug}-${crypto.randomBytes(5).toString("hex")}`
-  //   : slug;
   return slug;
 }
-
-modelSchema.pre("save", async (next) => {
-  console.log(this.published);
-  console.log(
-    await modelSchema.model(modelSchema.constructor.modelName).find()
-  );
-
+newsSchema.pre("save", async function () {
+  let tempSlug = null;
+  let slug = generateSlug(this[newsSchema.tree.slug.source]);
+  console.log(this.isModified("slug"));
   // onCreate
   if (this.isNew) {
+    console.log(`onCreate`);
     if (this.published === true) {
+      // generate new unique slug onCreate
+      tempSlug = (await this.model(this.constructor.modelName).exists({ slug }))
+        ? `${slug}-${crypto.randomBytes(5).toString("hex")}`
+        : slug;
+
       this.draft = false;
-      this.slug = generateSlug(this.title);
     } else {
       // this.draft = true;
-      this.slug = null;
+      tempSlug = null;
     }
   }
   // onUpdate
   else {
+    console.log(`onUpdate`);
     if (!this.slug && this.published === true) {
-      this.slug = generateSlug(this.title);
+      tempSlug = `${slug}-${crypto.randomBytes(5).toString("hex")}`;
     } else if (!this.slug && this.published === false) {
-      this.slug = null;
+      tempSlug = null;
     } else {
-      this.slug = this.slug;
+      tempSlug = this.slug;
     }
   }
-  next();
+
+  this.slug = tempSlug;
 });
-const NewsSchema = model("News", modelSchema);
-module.exports = NewsSchema;
+
+module.exports = model("News", newsSchema);
