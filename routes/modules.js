@@ -2,7 +2,6 @@ const fs = require("fs");
 const { resolve, join } = require("path");
 const module_path = resolve(__dirname, "./../modules");
 
-console.log(__dirname);
 const modules = fs.readdirSync(module_path);
 
 module.exports = (app) => {
