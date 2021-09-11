@@ -1,27 +1,11 @@
 // import Routes from modules or global place
-const authRoutes = require("../modules/authentication/routes");
-const taskRoutes = require("../modules/task/routes");
+const modules = require("./modules");
 
 const routes = [
   {
-    name: "authRoutes",
+    name: "allmodules",
     type: "module",
-    handler: authRoutes,
-  },
-  {
-    name: "taskRoutes",
-    type: "module",
-    handler: taskRoutes,
-  },
-  {
-    name: "newsRoutes",
-    type: "module",
-    handler: require("../modules/news/routes"),
-  },
-  {
-    name: "swaggerRoutes",
-    type: "module",
-    handler: require("../modules/swagger/routes"),
+    handler: modules,
   },
   /**
    * @swagger

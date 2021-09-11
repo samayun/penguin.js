@@ -6,8 +6,14 @@ const newsService = require("../services/news.service")(News);
 
 module.exports = (routes) => {
   routes.use("/api/news", router);
-
-  // GET /api/news
+  /**
+   * @swagger
+   * /api/news:
+   *   get:
+   *     summary: News Route
+   *     responses:
+   *       200:
+   */
   router.get("/", async (req, res, next) => {
     try {
       return res.json({

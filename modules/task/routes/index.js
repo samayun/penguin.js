@@ -3,18 +3,20 @@ const router = require("express").Router();
 const Task = require("../models/Task.model");
 
 const taskService = require("../services/task.service")(Task);
-const taskService1 = require("../services/task.service")(Task);
 
 module.exports = (routes) => {
   routes.use("/api/tasks", router);
 
   router.get("/", async (req, res, next) => {
     try {
+      // await taskService.getAll()
       return res.json({
         success: true,
         message: "Get all task",
-        data: await taskService.getAll(),
-        bool: taskService === taskService1,
+        data: [
+          { id: 1, name: " Modular Arch" },
+          { id: 2, name: "Node Arch" },
+        ],
       });
     } catch (error) {
       next(error);
