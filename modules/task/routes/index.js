@@ -9,14 +9,10 @@ module.exports = (routes) => {
 
   router.get("/", async (req, res, next) => {
     try {
-      // await taskService.getAll()
       return res.json({
         success: true,
         message: "Get all task",
-        data: [
-          { id: 1, name: " Modular Arch" },
-          { id: 2, name: "Node Arch" },
-        ],
+        data: await taskService.getAll(),
       });
     } catch (error) {
       next(error);

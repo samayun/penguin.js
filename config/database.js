@@ -15,7 +15,7 @@ module.exports = {
     mysql: {
       driver: "mysql",
       url: process.env.DATABASE_URL,
-      prefix: process.env.DB_PRE_PROTOCOL || "mongodb+srv://",
+      prefix: process.env.DB_PRE_PROTOCOL || "mysql://",
       host: process.env.DB_HOST || "127.0.0.1",
       port: process.env.DB_PORT || 3306,
       database: process.env.DB_NAME || "db_penguin",

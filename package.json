@@ -15,11 +15,14 @@
   "license": "ISC",
   "description": "Penguin is an opinionated express framework provides rapid development facility",
   "dependencies": {
+    "aws-sdk": "^2.987.0",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "jwt-auth-helper": "^1.0.0",
     "mongoose": "^6.0.4",
+    "multer": "^1.4.3",
+    "multer-s3": "^2.9.0",
     "swagger-jsdoc": "^6.1.0",
     "swagger-ui-express": "^4.1.6"
   },

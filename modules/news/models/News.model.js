@@ -49,10 +49,9 @@ function generateSlug(source) {
 newsSchema.pre("save", async function () {
   let tempSlug = null;
   let slug = generateSlug(this[newsSchema.tree.slug.source]);
-  console.log(this.isModified("slug"));
+
   // onCreate
   if (this.isNew) {
-    console.log(`onCreate`);
     if (this.published === true) {
       // generate new unique slug onCreate
       tempSlug = (await this.model(this.constructor.modelName).exists({ slug }))
@@ -65,18 +64,6 @@ newsSchema.pre("save", async function () {
       tempSlug = null;
     }
   }
-  // onUpdate
-  else {
-    console.log(`onUpdate`);
-    if (!this.slug && this.published === true) {
-      tempSlug = `${slug}-${crypto.randomBytes(5).toString("hex")}`;
-    } else if (!this.slug && this.published === false) {
-      tempSlug = null;
-    } else {
-      tempSlug = this.slug;
-    }
-  }
-
   this.slug = tempSlug;
 });
 
