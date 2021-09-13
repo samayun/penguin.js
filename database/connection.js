@@ -1,3 +1,3 @@
-const config = require("../config/database");
+const { connection } = require("../config/database");
 
-module.exports = require(`./${config.default}`);
+module.exports = require(`./${connection}`);

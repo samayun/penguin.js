@@ -1,5 +1,5 @@
 module.exports = {
-  default: process.env.DB_CONNECTION || "mongodb",
+  connection: process.env.DB_CONNECTION || "mongodb",
   connections: {
     mongodb: {
       driver: "mongodb",
