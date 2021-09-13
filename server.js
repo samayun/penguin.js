@@ -21,4 +21,4 @@ connectDB()
      */
     app.listen(PORT, () => console.log(`http://localhost:${PORT}`));
   })
-  .catch((err) => console.log(err.message || "Server Down"));
+  .catch((err) => console.log(err || "Server Down"));

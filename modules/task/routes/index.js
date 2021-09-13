@@ -12,7 +12,7 @@ module.exports = (routes) => {
       return res.json({
         success: true,
         message: "Get all task",
-        data: await taskService.getAll(),
+        data: [{ name: "Salnma" }],
       });
     } catch (error) {
       next(error);

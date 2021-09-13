@@ -5,9 +5,15 @@ const mongoose = require("mongoose");
 
 module.exports = async function connectDB() {
   try {
-    const uri =
-      url ||
-      `${prefix}${username}:${password}@${host}:${port}/${database}${suffix}`;
+    let uri;
+    if (url) {
+      uri = url;
+    } else if (port) {
+      uri = `${prefix}${username}:${password}@${host}:${port}/${database}${suffix}`;
+    } else {
+      uri = `${prefix}${username}:${password}@${host}/${database}${suffix}`;
+    }
+
     const options = { useNewUrlParser: true, useUnifiedTopology: true };
     await mongoose.connect(uri, options);
     return Promise.resolve(`Database Connected`);

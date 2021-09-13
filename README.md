@@ -4,6 +4,23 @@ Architect an express.js application
 
 ![NODE.JS](https://viitorcloud.com/blog/wp-content/uploads/2018/06/Node-JS-App-Development-for-Business-cover.jpg)
 
+## Commands and Usage
+
+```bash
+
+# clone repository & navigate project
+
+# Copy .env.example to .env
+$ cp .env.example .env
+
+# Build container image
+$ make build
+
+# Run containers
+$ make run
+
+```
+
 ### Check List
 
 <details>
@@ -36,5 +53,15 @@ Architect an express.js application
 - Framework: ↪️ [Express.js](https://expressjs.com) as web framework
 - Database: ↪️ [MongoDB](https://www.mongodb.com) as NoSQL Database
 - Documentation: ↪️ [Swagger](https://swagger.io)
+
+</details>
+
+<details>
+<summary>
+ ➡️ Containerize
+</summary>
+
+- Build Container by Docker : `make build` or `docker build . -t samayun/penguin`
+- Run Container by Docker: `make run` or `docker run -p 5000:8080 -d samayun/penguin`
 
 </details>

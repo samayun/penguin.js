@@ -7,7 +7,7 @@ module.exports = {
       prefix: process.env.DB_PRE_PROTOCOL || "mongodb+srv://",
       suffix: process.env.DB_EXTRA || "retryWrites=true&w=majority",
       host: process.env.DB_HOST || "127.0.0.1",
-      port: process.env.DB_PORT || 27017,
+      port: process.env.DB_PORT || undefined,
       database: process.env.DB_NAME || "db_penguin",
       username: process.env.DB_USER || "root",
       password: process.env.DB_PASSWORD || "",
