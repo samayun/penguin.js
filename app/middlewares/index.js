@@ -5,6 +5,7 @@ const middlewares = [
   cors(),
   express.json(),
   express.urlencoded({ extended: true }),
+  express.static("uploads"),
 ];
 
 module.exports = (app) => {
