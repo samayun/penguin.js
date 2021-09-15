@@ -8,7 +8,13 @@ const { URL } = require("url");
 const util = require("util");
 const exec = util.promisify(require("child_process").exec);
 
-const upload = multer({ dest: "uploads/" });
+const upload = multer({ dest: "public/" });
+
+function sizeTheFile(fileSize) {
+  return Math.floor(fileSize / 1024) > 1000
+    ? Math.floor(fileSize / 1024) / 1000 + "MB"
+    : Math.floor(fileSize / 1024) + "KB";
+}
 
 module.exports = (routes) => {
   routes.use("/api/media", router);
@@ -30,7 +36,7 @@ module.exports = (routes) => {
 
     upload.single("file"),
     // multer({
-    //   dest: "uploads/",
+    //   dest: "public/",
     //   upload: null, // take uploading process
     //   inMemory: true, //or false, not needed here
 
@@ -63,7 +69,7 @@ module.exports = (routes) => {
         return res.json({
           success: true,
           message: "Ping",
-          data: "Pong",
+          data: req.files,
         });
       } catch (error) {
         next(error);
@@ -75,7 +81,7 @@ module.exports = (routes) => {
     try {
       // do a bunch of if statements to make sure the user is
       // authorized to view this image, then
-      const readStream = fs.createReadStream(`uploads/${req.params.file}`);
+      const readStream = fs.createReadStream(`public/${req.params.file}`);
       readStream.pipe(res);
     } catch (error) {
       next(error);
@@ -100,7 +106,7 @@ module.exports = (routes) => {
       return;
     }
 
-    console.log(fileSize);
+    console.log(sizeTheFile(fileSize));
 
     if (!fileId) {
       res.writeHead(400, "No file id");
@@ -126,7 +132,7 @@ module.exports = (routes) => {
         return;
       }
       // append to existing file
-      fileStream = fs.createWriteStream(`./uploads/${name}`, {
+      fileStream = fs.createWriteStream(`uploads/${name}`, {
         flags: "a",
       });
     }
@@ -192,16 +198,12 @@ module.exports = (routes) => {
     let fileId = req.headers["x-file-id"];
     let name = req.headers["name"];
     let fileSize = parseInt(req.headers["size"], 10);
-    console.log(
-      Math.floor(fileSize / 1024) > 1000
-        ? Math.floor(fileSize / 1024) / 1000 + "MB"
-        : Math.floor(fileSize / 1024) + "KB"
-    );
+    console.log(sizeTheFile(fileSize));
     // res.setHeader("Transfer-Encoding", "chunked");
 
     if (name) {
       try {
-        let stats = fs.statSync("uploads/" + name);
+        let stats = fs.statSync("public/" + name);
         if (stats.isFile()) {
           console.log(
             `fileSize is ${

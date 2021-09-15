@@ -1,6 +1,6 @@
 {
   "name": "penguin-js",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "main": "server.js",
   "scripts": {
     "start": "node server",
@@ -19,6 +19,8 @@
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "express-fileupload": "^1.2.1",
+    "inquirer": "^8.1.4",
     "jwt-auth-helper": "^1.0.0",
     "mongoose": "^6.0.4",
     "multer": "^1.4.3",
