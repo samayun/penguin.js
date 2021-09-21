@@ -4,6 +4,10 @@ Architect an express.js application
 
 ![NODE.JS](https://viitorcloud.com/blog/wp-content/uploads/2018/06/Node-JS-App-Development-for-Business-cover.jpg)
 
+## Documentation
+
+- [FFMPEG Converter using CLI](modules/media/README.md)
+
 ## Commands and Usage
 
 ```bash
@@ -11,13 +15,16 @@ Architect an express.js application
 # clone repository & navigate project
 
 # Copy .env.example to .env
-$ cp .env.example .env
+ cp .env.example .env
+
+# make storage link
+ mkdir public
 
 # Build container image
-$ make build
+ make build
 
 # Run containers
-$ make run
+ make run
 
 ```
 
