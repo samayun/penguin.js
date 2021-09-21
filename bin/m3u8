@@ -1,0 +1,13 @@
+#! /usr/bin/env node
+
+const convertTom3u8 = require("../modules/media/utils/hls");
+
+try {
+  const filename = process.argv[2];
+  if (!filename) {
+    throw new Error("Media must be video");
+  }
+  convertTom3u8(filename);
+} catch (error) {
+  console.log(error.message);
+}

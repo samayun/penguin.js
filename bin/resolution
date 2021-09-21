@@ -1,0 +1,5 @@
+#! /usr/bin/env node
+
+const { getFileResolution } = require("../modules/media/utils/resolution");
+
+getFileResolution(process.argv[2]).then((data) => console.log(data));

@@ -2,7 +2,13 @@
   "name": "penguin-js",
   "version": "0.0.1",
   "main": "server.js",
+  "bin": {
+    "m3u8": "bin/m3u8",
+    "convert": "bin/convert",
+    "resolution": "bin/resolution"
+  },
   "scripts": {
+    "m3u8": "node bin/m3u8",
     "start": "node server",
     "start:dev": "nodemon server"
   },
@@ -20,6 +26,7 @@
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-fileupload": "^1.2.1",
+    "fluent-ffmpeg": "^2.1.2",
     "inquirer": "^8.1.4",
     "jwt-auth-helper": "^1.0.0",
     "mongoose": "^6.0.4",
