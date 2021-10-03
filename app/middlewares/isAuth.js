@@ -32,7 +32,7 @@ const authenticate = async (req, res, next) => {
     }
 
     req.isAuth = true;
-    req.user = decodedAuthData;
+    req.user = decodedAuthData._doc;
     return next();
   } catch (error) {
     next(error);

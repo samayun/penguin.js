@@ -10,7 +10,7 @@
   "scripts": {
     "m3u8": "node bin/m3u8",
     "start": "node server",
-    "start:dev": "nodemon server"
+    "start:dev": "nodemon -L server"
   },
   "keywords": [
     "nodejs-framework",

@@ -43,7 +43,6 @@ module.exports = (routes) => {
   router.post("/register", registerValidator, async (req, res, next) => {
     try {
       const user = await authService.register(req.body);
-      console.log(user);
       // generate access token
       const access_token = await jwt.generateJWTToken({ ...user });
 
@@ -59,13 +58,10 @@ module.exports = (routes) => {
   // GET /api/auth/profile
   router.get("/profile", authenticate, async (req, res, next) => {
     try {
-      const user = await authService.profile(req.user.email);
-      console.log(user);
-
       res.json({
         status: "success",
         message: `Valid profile`,
-        data: user,
+        data: await authService.profile(req.user.email),
       });
     } catch (error) {
       next(error);
@@ -74,12 +70,10 @@ module.exports = (routes) => {
   // GET /api/auth/users
   router.get("/users", authenticate, async (req, res, next) => {
     try {
-      const data = await authService.users();
-
       res.json({
         status: "success",
         message: `Valid profile`,
-        data,
+        data: await authService.getUsers(),
       });
     } catch (error) {
       next(error);
