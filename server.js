@@ -9,7 +9,7 @@ const setMiddlewares = require("./app/middlewares");
 setMiddlewares(app);
 
 // USING ROUTES from Routes Directory
-const setRoutes = require("./routes");
+const setRoutes = require("./routes.js");
 setRoutes(app);
 
 // Connect Database
@@ -22,3 +22,5 @@ connectDB()
     app.listen(PORT, () => console.log(`http://localhost:${PORT}`));
   })
   .catch((err) => console.log(err || "Server Down"));
+
+module.exports = app;
