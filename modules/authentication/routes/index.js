@@ -12,23 +12,36 @@ const path = '/v1/auth';
 const router = require('express').Router();
 
 module.exports = () => {
-    // POST /api/auth/login
+    router.get('/test', (req, res, next) => {
+        /* #swagger.tags = ['Authentication']
+     	#swagger.basePath = '/v1/auth'
+         #swagger.description = 'XXXXXXXXXXXX'
+         */
+        res.status(200).json({
+            message: 'TEST Swagger Docs'
+        });
+    });
+    router.get('/hello2', (req, res, next) => {
+        /* #swagger.tags = ['Authentication']
+     	#swagger.basePath = '/v1/auth'
+         #swagger.description = 'XXXXXXXXXXXX'
+         */
+        res.status(200).json({
+            message: 'TEST Swagger Docs'
+        });
+    });
     router.post('/login', loginValidator, async (req, res, next) => {
-        try {
-            /* 	#swagger.tags = ['User']
-      /* 	#swagger.basePath = 'auth'
-        #swagger.description = 'Endpoint to sign in a specific user' */
+        /* #swagger.tags = ['Authentication']
+     	#swagger.basePath = '/v1/auth'
+        #swagger.description = 'Sign in a specific user'
 
-            /*	#swagger.parameters['obj'] = {
+        	#swagger.parameters['obj'] = {
             in: 'body',
             description: 'User information.',
             required: true,
             schema: { $ref: "#/definitions/AddUser" }
     } */
-
-            /* #swagger.security = [{
-            "apiKeyAuth": []
-    }] */
+        try {
             const user = await authService.login({
                 email: req.body.email,
                 password: req.body.password
@@ -53,7 +66,7 @@ module.exports = () => {
      * { name : "Salman Akash", email: "samu@gmail.com, password: "123456"}
      *  */
     router.post('/register', registerValidator, async (req, res, next) => {
-        /* 	#swagger.tags = ['User']
+        /* 	#swagger.tags = ['Authentication']
         #swagger.description = 'Endpoint to sign up a specific user' */
         try {
             const user = await authService.register(req.body);

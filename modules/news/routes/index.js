@@ -7,15 +7,8 @@ const path = '/v1/news';
 const router = require('express').Router();
 
 module.exports = () => {
-    /**
-     * @swagger
-     * /api/news:
-     *   get:
-     *     summary: News Route
-     *     responses:
-     *       200:
-     */
     router.get('/', async (req, res, next) => {
+        /* #swagger.tags = ['news'] */
         try {
             return res.json({
                 success: true,
@@ -26,8 +19,9 @@ module.exports = () => {
             next(error);
         }
     });
-    // POST /api/news
+
     router.post('/', createNewsValidator, async (req, res, next) => {
+        /* #swagger.tags = ['news'] */
         try {
             return res.json({
                 success: true,
@@ -38,8 +32,9 @@ module.exports = () => {
             next(error);
         }
     });
-    // GET /api/news/update/:id
+
     router.put('/update/:id', async (req, res, next) => {
+        /* #swagger.tags = ['news'] */
         try {
             return res.json({
                 success: true,
@@ -52,6 +47,7 @@ module.exports = () => {
     });
     // GET /api/news/show?_id=aeb54 | email=samu@gmail.com | slug=test
     router.get('/show', async (req, res, next) => {
+        /* #swagger.tags = ['news'] */
         try {
             if (req.query.email || req.query._id || req.query.slug) {
                 return res.json({
@@ -67,6 +63,7 @@ module.exports = () => {
     });
     // PUT /api/news/update/?_id=aeb54 | email=samu@gmail.com | slug=test
     router.put('/update', async (req, res, next) => {
+        /* #swagger.tags = ['news'] */
         try {
             if (req.query.email || req.query._id || req.query.slug) {
                 return res.json({
@@ -83,6 +80,7 @@ module.exports = () => {
 
     // DELETE /api/news/update/?_id=aeb54 | email=samu@gmail.com | slug=test
     router.delete('/delete', async (req, res, next) => {
+        /* #swagger.tags = ['news'] */
         try {
             if (req.query.email || req.query._id || req.query.slug) {
                 return res.json({

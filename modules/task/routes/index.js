@@ -6,6 +6,7 @@ const router = require('express').Router();
 
 module.exports = () => {
     router.get('/', async (req, res, next) => {
+        /* #swagger.tags = ['tasks'] */
         try {
             return res.json({
                 success: true,
@@ -18,6 +19,7 @@ module.exports = () => {
     });
 
     router.post('/', async (req, res, next) => {
+        /* #swagger.tags = ['tasks'] */
         try {
             return res.json({
                 success: true,
@@ -30,6 +32,7 @@ module.exports = () => {
     });
 
     router.put('/update/:id', async (req, res, next) => {
+        /* #swagger.tags = ['tasks'] */
         try {
             return res.json({
                 success: true,
@@ -42,6 +45,7 @@ module.exports = () => {
     });
 
     router.get('/show', async (req, res, next) => {
+        /* #swagger.tags = ['tasks'] */
         try {
             if (req.query.email || req.query._id || req.query.slug) {
                 return res.json({
@@ -57,6 +61,7 @@ module.exports = () => {
     });
 
     router.put('/update', async (req, res, next) => {
+        /* #swagger.tags = ['tasks'] */
         try {
             if (req.query.email || req.query._id || req.query.slug) {
                 return res.json({
@@ -72,6 +77,7 @@ module.exports = () => {
     });
 
     router.delete('/delete', async (req, res, next) => {
+        /* #swagger.tags = ['tasks'] */
         try {
             if (req.query.email || req.query._id || req.query.slug) {
                 return res.json({

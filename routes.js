@@ -67,10 +67,9 @@ module.exports = app => {
             app.get(route.path, route.handler);
         } else if (route.type === 'module') {
             // accepted moduler routes
-            // route.handler(app);
             const handlers = route.handler();
 
-            handlers.forEach(({ path, router }) => {
+            handlers.routers.forEach(({ path, router }) => {
                 app.use('/api' + path, router);
             });
         } else {

@@ -15,8 +15,9 @@ function sizeTheFile(fileSize) {
 const routePath = '/v1/media';
 const router = require('express').Router();
 
-module.exports = routes => {
+module.exports = () => {
     router.get('/', async (req, res, next) => {
+        /* #swagger.tags = ['media'] */
         try {
             return res.json({
                 success: true,
@@ -61,6 +62,7 @@ module.exports = routes => {
         //   },
         // }),
         async (req, res, next) => {
+            /* #swagger.tags = ['media'] */
             try {
                 console.log(req.file);
                 return res.json({
@@ -75,6 +77,7 @@ module.exports = routes => {
     );
 
     router.get('/files/:file', (req, res, next) => {
+        /* #swagger.tags = ['media'] */
         try {
             // do a bunch of if statements to make sure the user is
             // authorized to view this image, then
@@ -88,6 +91,7 @@ module.exports = routes => {
     let uploads = {};
 
     router.post('/upload', (req, res, next) => {
+        /* #swagger.tags = ['media'] */
         let fileId = req.headers['x-file-id'];
         let startByte = parseInt(req.headers['x-start-byte'], 10);
         let name = req.headers['name'];
@@ -176,6 +180,7 @@ module.exports = routes => {
     }
 
     router.post('/convert', async (req, res, next) => {
+        /* #swagger.tags = ['media'] */
         if (!req.files) {
             return res.status(500).send({ msg: 'file is not found' });
         }
@@ -189,6 +194,7 @@ module.exports = routes => {
     });
 
     router.get('/status', (req, res) => {
+        /* #swagger.tags = ['media'] */
         let fileId = req.headers['x-file-id'];
         let name = req.headers['name'];
         let fileSize = parseInt(req.headers['size'], 10);
