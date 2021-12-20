@@ -1,7 +1,7 @@
 const { host, port } = require('./config/server');
 const { API_ROUTE_PREFIX } = require('./config/api');
 
-const swaggerAutogen = require('./penguin-swagger-autogen');
+const swaggerAutogen = require('./app/modules/swagger/penguin-swagger-autogen');
 
 const doc = {
     info: {
@@ -22,9 +22,9 @@ const doc = {
     ]
 };
 
-const handlers = require('./modules/index')();
+const handlers = require('./modules')();
 
-const outputFile = './modules/swagger/dto/swagger_output.json';
+const outputFile = './app/modules/swagger/output/swagger_output.json';
 
 const endpointRoutes = handlers.routes;
 

@@ -104,6 +104,7 @@ module.exports = function (args) {
                 let obj = await handleFiles.readEndpointFile(filePath, '', relativePath, []);
 
                 // TODO:PenguinJS basePath implementaion
+
                 if (semibasePath) {
                     for (const key in obj) {
                         if (setApiDefaultBasepath) {
@@ -250,9 +251,15 @@ module.exports = function (args) {
                 delete objDoc.servers;
             }
 
-            // console.log({objDoc: objDoc.paths})
             let dataJSON = JSON.stringify(objDoc, null, 2);
-            fs.writeFileSync(outputFile, dataJSON);
+            if (!fs.existsSync(outputFile)) {
+                fs.writeFileSync(outputFile, dataJSON, {
+                    flag: 'wx'
+                });
+            } else {
+                fs.writeFileSync(outputFile, dataJSON);
+            }
+
             if (!options.disableLogs) {
                 console.log('Swagger-autogen:', '\x1b[32m', 'Success ' + symbols.success, '\x1b[0m');
             }

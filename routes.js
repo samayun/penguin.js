@@ -1,5 +1,6 @@
 // import Routes from modules or global place
 const modules = require('./modules');
+const swaggerModule = require('./app/modules/swagger/routes');
 
 const routes = [
     {
@@ -7,14 +8,6 @@ const routes = [
         type: 'module',
         handler: modules
     },
-    /**
-     * @swagger
-     * /:
-     *   get:
-     *     summary: Home Route
-     *     responses:
-     *       200:
-     */
 
     {
         path: '/',
@@ -25,12 +18,9 @@ const routes = [
         }
     },
     {
-        name: 'TEST',
-        path: '/tests',
-        handler: (req, res) => {
-            /*  #swagger.description = 'XXXXXXXXXXXXXXX.' */
-            res.json({ message: 'ALll is well' });
-        }
+        name: 'Swagger Route',
+        path: '/docs',
+        handler: swaggerModule()
     },
     {
         name: 'Not Found',
@@ -72,9 +62,11 @@ module.exports = app => {
             handlers.routers.forEach(({ path, router }) => {
                 app.use('/api' + path, router);
             });
-        } else {
+        } else if (route.path) {
             // rest routes for RESTful API
             app.use(route.path, route.handler);
+        } else {
+            app.use(route.handler);
         }
     });
 };
