@@ -1,8 +1,26 @@
-# Penguin.js
+<h2 align="center">Penguin.js </h2>
+
+<p align="center">
+ <img src="https://c.tenor.com/Z_Z9gYlFDc0AAAAC/hello-penguin.gif" alt="E Penguin Shop" style="margin: 0px 15%;text-align:center;"/>
+</p>
+<p align="center">
+<img src="https://img.shields.io/github/issues/samayun/penguin.js" alt="Issues">
+<img src="https://img.shields.io/github/forks/samayun/penguin.js" alt="Forks">
+
+<img src="https://img.shields.io/github/stars/samayun/penguin.js?color=%2312ff65&label=Stars&logo=Star&logoColor=green&style=flat" alt="Stars">
+<img src="https://img.shields.io/github/license/samayun/penguin.js" alt="License">
+
+<a href="https://twitter.com/intent/tweet?text=What a framework ! Wow !Check It =>  :&url=https://github.com/samayun/penguin.js"> 
+<img src="https://img.shields.io/twitter/url?label=Follow@samayunmc&logoColor=%230f0&url=https%3A%2F%2Fgithub.com%2Fsamayun%2Fpenguin.js" alt="Tweet">
+</a>
+</p>
+
+
+
 
 Architect an express.js application
 
-![NODE.JS](https://viitorcloud.com/blog/wp-content/uploads/2018/06/Node-JS-App-Development-for-Business-cover.jpg)
+<!-- ![NODE.JS](https://viitorcloud.com/blog/wp-content/uploads/2018/06/Node-JS-App-Development-for-Business-cover.jpg) -->
 
 ## Documentation
 
