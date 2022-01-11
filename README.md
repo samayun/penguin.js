@@ -1,7 +1,7 @@
 <h2 align="center">Penguin.js </h2>
 
 <p align="center">
- <img src="https://c.tenor.com/Z_Z9gYlFDc0AAAAC/hello-penguin.gif" alt="E Penguin Shop" style="margin: 0px 15%;text-align:center;"/>
+ <img src="https://c.tenor.com/Z_Z9gYlFDc0AAAAC/hello-penguin.gif" alt="E Penguin Shop" style="margin: 0px 15%;text-align:center;width:200px;"/>
 </p>
 <p align="center">
 <img src="https://img.shields.io/github/issues/samayun/penguin.js" alt="Issues">
