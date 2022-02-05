@@ -11,7 +11,7 @@
 <img src="https://img.shields.io/github/license/samayun/penguin.js" alt="License">
 
 <a href="https://twitter.com/intent/tweet?text=What a framework ! Wow !Check It =>  :&url=https://github.com/samayun/penguin.js"> 
-<img src="https://img.shields.io/twitter/url?label=Follow@samayunmc&logoColor=%230f0&url=https%3A%2F%2Fgithub.com%2Fsamayun%2Fpenguin.js" alt="Tweet">
+<img src="https://img.shields.io/twitter/url?label=Follow@samayun&logoColor=%230f0&url=https%3A%2F%2Fgithub.com%2Fsamayun%2Fpenguin.js" alt="Tweet">
 </a>
 </p>
 
@@ -83,7 +83,7 @@ Architect an express.js application
 
 <details>
 <summary>
- ➡️ Containerize
+ ➡️ Virtualization
 </summary>
 
 - Build Container by Docker : `make build` or `docker build . -t samayun/penguin`
