@@ -31,16 +31,16 @@ module.exports = function (args) {
       let allFiles = [];
       // Checking if endpoint files exist
       for (let idx = 0; idx < endpointsFiles.length; ++idx) {
-        let file = endpointsFiles[idx];
+        const file = endpointsFiles[idx];
         if (file.includes('*')) {
           const patternPath = await utils.resolvePatternPath(file);
           if (patternPath) {
             for (let idxFile = 0; idxFile < patternPath.length; ++idxFile) {
-              let file = patternPath[idxFile];
-              let extension = await utils.getExtension(file);
+              const file = patternPath[idxFile];
+              const extension = await utils.getExtension(file);
 
               if (!fs.existsSync(file + extension)) {
-                throw console.error("\nError: File not found: '" + file + "'");
+                throw console.error(`\nError: File not found: '${file}'`);
               } else {
                 patternPath[idxFile] = file + extension;
               }
@@ -48,10 +48,10 @@ module.exports = function (args) {
             allFiles = [...allFiles, ...patternPath];
           }
         } else {
-          let extension = await utils.getExtension(file);
+          const extension = await utils.getExtension(file);
           allFiles = [...allFiles, file + extension];
           if (!fs.existsSync(file + extension)) {
-            throw console.error("\nError: File not found: '" + file + "'");
+            throw console.error(`\nError: File not found: '${file}'`);
           }
         }
       }
@@ -65,7 +65,7 @@ module.exports = function (args) {
       }
 
       // Removing all null attributes
-      for (let key in objDoc) {
+      for (const key in objDoc) {
         if (objDoc[key] === null) {
           delete objDoc[key];
         }
@@ -86,9 +86,9 @@ module.exports = function (args) {
 
         const resp = await fs.existsSync(filePath);
         if (!resp) {
-          console.error('\nError: Endpoint file not found => ' + "'" + filePath + "'");
+          console.error(`${'\nError: Endpoint file not found => ' + "'"}${filePath}'`);
           if (!options.disableLogs) {
-            console.log('Swagger-autogen:', '\x1b[31m', 'Failed ' + symbols.failed, '\x1b[0m');
+            console.log('Swagger-autogen:', '\x1b[31m', `Failed ${symbols.failed}`, '\x1b[0m');
           }
           return false;
         }
@@ -101,14 +101,14 @@ module.exports = function (args) {
           relativePath = null;
         }
 
-        let obj = await handleFiles.readEndpointFile(filePath, '', relativePath, []);
+        const obj = await handleFiles.readEndpointFile(filePath, '', relativePath, []);
 
         // TODO:PenguinJS basePath implementaion
 
         if (semibasePath) {
           for (const key in obj) {
             if (setApiDefaultBasepath) {
-              obj['/api' + semibasePath[i].path + key] = obj[key];
+              obj[`/api${semibasePath[i].path}${key}`] = obj[key];
             } else {
               obj[semibasePath[i].path + key] = obj[key];
             }
@@ -119,7 +119,7 @@ module.exports = function (args) {
 
         if (obj === false) {
           if (!options.disableLogs) {
-            console.log('Swagger-autogen:', '\x1b[31m', 'Failed ' + symbols.failed, '\x1b[0m');
+            console.log('Swagger-autogen:', '\x1b[31m', `Failed ${symbols.failed}`, '\x1b[0m');
           }
           return false;
         }
@@ -135,11 +135,11 @@ module.exports = function (args) {
         if (constainXML) {
           objDoc.definitions[definition] = {
             ...swaggerTags.formatDefinitions(objDoc.definitions[definition], {}, constainXML),
-            xml: { name: definition }
+            xml: { name: definition },
           };
         } else {
           objDoc.definitions[definition] = {
-            ...swaggerTags.formatDefinitions(objDoc.definitions[definition], {}, constainXML)
+            ...swaggerTags.formatDefinitions(objDoc.definitions[definition], {}, constainXML),
           };
         }
       });
@@ -156,15 +156,15 @@ module.exports = function (args) {
             if (objDoc.schemes && objDoc.schemes.length > 0) {
               objDoc.schemes.forEach(scheme => {
                 objDoc.servers.push({
-                  url: scheme + '://' + objDoc.host
+                  url: `${scheme}://${objDoc.host}`,
                 });
               });
             } else {
-              objDoc.host = 'http://' + objDoc.host;
+              objDoc.host = `http://${objDoc.host}`;
               objDoc.servers = [
                 {
-                  url: objDoc.host
-                }
+                  url: objDoc.host,
+                },
               ];
             }
           }
@@ -182,13 +182,17 @@ module.exports = function (args) {
                 ...swaggerTags.formatDefinitions(
                   objDoc.components.schemas[schema],
                   {},
-                  constainXML
+                  constainXML,
                 ),
-                xml: { name: schema }
+                xml: { name: schema },
               };
             } else {
               objDoc.components.schemas[schema] = {
-                ...swaggerTags.formatDefinitions(objDoc.components.schemas[schema], {}, constainXML)
+                ...swaggerTags.formatDefinitions(
+                  objDoc.components.schemas[schema],
+                  {},
+                  constainXML,
+                ),
               };
             }
           });
@@ -197,10 +201,10 @@ module.exports = function (args) {
         if (objDoc.components && objDoc.components.examples) {
           Object.keys(objDoc.components.examples).forEach(example => {
             if (!objDoc.components.examples[example].value) {
-              let auxExample = { ...objDoc.components.examples[example] };
+              const auxExample = { ...objDoc.components.examples[example] };
               delete objDoc.components.examples[example];
               objDoc.components.examples[example] = {
-                value: auxExample
+                value: auxExample,
               };
             }
           });
@@ -216,7 +220,7 @@ module.exports = function (args) {
 
           objDoc.components.schemas = {
             ...objDoc.components.schemas,
-            ...objDoc.definitions
+            ...objDoc.definitions,
           };
 
           delete objDoc.definitions;
@@ -232,7 +236,7 @@ module.exports = function (args) {
 
           objDoc.components.securitySchemes = {
             ...objDoc.components.securitySchemes,
-            ...objDoc.securityDefinitions
+            ...objDoc.securityDefinitions,
           };
 
           delete objDoc.securityDefinitions;
@@ -265,22 +269,22 @@ module.exports = function (args) {
         delete objDoc.servers;
       }
 
-      let dataJSON = JSON.stringify(objDoc, null, 2);
+      const dataJSON = JSON.stringify(objDoc, null, 2);
       if (!fs.existsSync(outputFile)) {
         fs.writeFileSync(outputFile, dataJSON, {
-          flag: 'wx'
+          flag: 'wx',
         });
       } else {
         fs.writeFileSync(outputFile, dataJSON);
       }
 
       if (!options.disableLogs) {
-        console.log('Swagger-autogen:', '\x1b[32m', 'Success ' + symbols.success, '\x1b[0m');
+        console.log('Swagger-autogen:', '\x1b[32m', `Success ${symbols.success}`, '\x1b[0m');
       }
       return { success: true, data: objDoc };
     } catch (err) {
       if (!options.disableLogs) {
-        console.log('Swagger-autogen:', '\x1b[31m', 'Failed ' + symbols.failed, '\x1b[0m');
+        console.log('Swagger-autogen:', '\x1b[31m', `Failed ${symbols.failed}`, '\x1b[0m');
       }
       return { success: false, data: null };
     }

@@ -2,25 +2,31 @@ class MySQLCrud {
   constructor(model) {
     this.Model = model;
   }
+
   async getAll() {
-    return await this.Model.find({});
+    return this.Model.find({});
   }
+
   async getOne(params) {
-    return await this.Model.findOne(params);
+    return this.Model.findOne(params);
   }
+
   async create(params) {
-    return await new this.Model(params).save();
+    return new this.Model(params).save();
   }
+
   async update(keys, params) {
-    return await this.Model.findOneAndUpdate(keys, {
-      $set: params
+    return this.Model.findOneAndUpdate(keys, {
+      $set: params,
     });
   }
+
   async deleteOne(key) {
-    return await this.Model.findOneAndDelete(key);
+    return this.Model.findOneAndDelete(key);
   }
+
   async delete(keys) {
-    return await this.Model.findAndDelete(keys);
+    return this.Model.findAndDelete(keys);
   }
 }
 

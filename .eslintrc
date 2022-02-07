@@ -1,29 +1,14 @@
 {
   "plugins": ["prettier"],
-  "extends": ["eslint:recommended", "plugin:prettier/recommended"],
-
-  "root": true,
+  "extends": ["airbnb-base", "plugin:prettier/recommended"],
   "env": {
-    "node": true,
-    "jest": true,
-    "es6": true
+    "node": true
   },
-  "parserOptions": {
-    "ecmaVersion": 6,
-    "createDefaultProgram": true
-  },
-
+  "ignorePatterns": "app/modules/swagger/penguin-swagger-autogen",
   "rules": {
-    "comma-dangle": [2, "never"],
-    "max-len": [
-      2,
-      {
-        "code": 100,
-        "tabWidth": 2
-      }
-    ],
-    "semi": 2,
-    "keyword-spacing": 2,
-    "indent": [2, 2, { "SwitchCase": 1 }]
+    "consistent-return": "off",
+    "global-require": 0,
+    "import/no-dynamic-require": 0,
+    "no-underscore-dangle": 0
   }
 }

@@ -1,5 +1,6 @@
+/* eslint-disable class-methods-use-this */
 const { BCrypt } = require('jwt-auth-helper');
-// manual import
+
 const User = require('../models/User.model');
 
 class AuthService {
@@ -17,11 +18,12 @@ class AuthService {
     const credentials = {
       name,
       email,
-      password: hashedPassword
+      password: hashedPassword,
     };
     // back user details
-    return await User.create(credentials);
+    return User.create(credentials);
   }
+
   async login({ email, password }) {
     // find User - query from database
     const existingUser = await User.findOne({ email });
@@ -39,11 +41,13 @@ class AuthService {
     delete existingUser.password;
     return existingUser;
   }
+
   async profile(email) {
-    return await User.findOne({ email });
+    return User.findOne({ email });
   }
+
   async getUsers() {
-    return await User.find({});
+    return User.find({});
   }
 }
 

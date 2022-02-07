@@ -78,19 +78,10 @@
                 "name": {
                   "example": "any"
                 },
-                "username": {
-                  "example": "any"
-                },
-                "phone": {
-                  "example": "any"
-                },
                 "email": {
                   "example": "any"
                 },
                 "password": {
-                  "example": "any"
-                },
-                "confirmPassword": {
                   "example": "any"
                 }
               }

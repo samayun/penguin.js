@@ -23,7 +23,7 @@ function readEndpointFile(
   pathRoute = '',
   relativePath,
   receivedRouteMiddlewares = [],
-  restrictedContent
+  restrictedContent,
 ) {
   return new Promise(resolve => {
     let paths = {};
@@ -43,11 +43,9 @@ function readEndpointFile(
         jsParsed = await codeParser.jsParserEsModule(data);
       }
 
-      let keywords = ['route', 'use', ...statics.METHODS];
+      const keywords = ['route', 'use', ...statics.METHODS];
       let regex = '';
-      keywords.forEach(
-        word => (regex += '\\s*\\n*\\t*\\.\\s*\\n*\\t*' + word + '\\s*\\n*\\t*\\(|')
-      );
+      keywords.forEach(word => (regex += `\\s*\\n*\\t*\\.\\s*\\n*\\t*${word}\\s*\\n*\\t*\\(|`));
       regex = regex.replace(/\|$/, '');
 
       /**
@@ -64,16 +62,16 @@ function readEndpointFile(
        * Issue: #49
        */
       if (dataToGetPatterns) {
-        let lastElem = dataToGetPatterns.split('.').slice(-1)[0].replaceAll(' ', '');
+        const lastElem = dataToGetPatterns.split('.').slice(-1)[0].replaceAll(' ', '');
         if (statics.METHODS.includes(lastElem)) {
-          dataToGetPatterns = dataToGetPatterns + '(';
+          dataToGetPatterns += '(';
         }
       }
       /* END CASE */
 
       let firstPattern = null;
       let patternsServer = []; // Stores patterns, such as: route, app, etc...
-      let propRoutes = []; // Used to store the new Router() properties, such as 'prefix'
+      const propRoutes = []; // Used to store the new Router() properties, such as 'prefix'
       let regexRouteMiddlewares = '';
       let dataSrc = null;
 
@@ -88,7 +86,7 @@ function readEndpointFile(
 
       let aData = await handleData.removeComments(dataSrc, true);
       aData = await handleData.clearData(aData);
-      let converted = await handleData.dataConverter(aData);
+      const converted = await handleData.dataConverter(aData);
       aData = converted.data;
       patternsServer = converted.patterns;
 
@@ -109,24 +107,24 @@ function readEndpointFile(
         }
 
         aDataToClean.add(dat);
-        dat = '(' + dat + ')';
+        dat = `(${dat})`;
         aDataAux = aDataAux.replace(dat, ' ');
       }
 
       aDataToClean = [...aDataToClean]; // converting to array
       for (let idxData = 0; idxData < aDataToClean.length; ++idxData) {
         let data = aDataToClean[idxData];
-        let swaggerComments = await handleData.getSwaggerComments(data);
+        const swaggerComments = await handleData.getSwaggerComments(data);
         data = await handleData.removeComments(data);
 
         // Avoiding ploblems when functions has the same name of a .methods
         for (let idxMet = 0; idxMet < statics.METHODS.length; ++idxMet) {
-          let method = statics.METHODS[idxMet];
-          data = data.split(new RegExp('\\.\\s*\\n*\\t*' + method));
-          data = data.join('.{_{__function__}_}' + method);
+          const method = statics.METHODS[idxMet];
+          data = data.split(new RegExp(`\\.\\s*\\n*\\t*${method}`));
+          data = data.join(`.{_{__function__}_}${method}`);
         }
-        data = '(' + data + (swaggerComments !== '' ? '\n' + swaggerComments : '') + ')';
-        aData = aData.replaceAll('(' + aDataToClean[idxData] + ')', data);
+        data = `(${data}${swaggerComments !== '' ? `\n${swaggerComments}` : ''})`;
+        aData = aData.replaceAll(`(${aDataToClean[idxData]})`, data);
       }
 
       /**
@@ -136,10 +134,10 @@ function readEndpointFile(
       if (regexNewRouter.test(aData)) {
         const routes = aData.split(regexNewRouter);
         for (let index = 1; index < routes.length; index += 2) {
-          let route = routes[index];
-          let prop = routes[index + 1];
-          let routerObj = {
-            routeName: null
+          const route = routes[index];
+          const prop = routes[index + 1];
+          const routerObj = {
+            routeName: null,
           };
 
           if (route.includes('Router') && prop.includes('prefix')) {
@@ -160,7 +158,7 @@ function readEndpointFile(
       }
       /* END CASE */
 
-      if (aData.includes(statics.SWAGGER_TAG + '.patterns')) {
+      if (aData.includes(`${statics.SWAGGER_TAG}.patterns`)) {
         /**
          * Manual pattern recognition
          * NOTE: Deprecated
@@ -170,17 +168,13 @@ function readEndpointFile(
 
         try {
           patterns = eval(
-            aData
-              .replaceAll(' ', '')
-              .split(statics.SWAGGER_TAG + '.patterns=')[1]
-              .split('*/')[0]
+            aData.replaceAll(' ', '').split(`${statics.SWAGGER_TAG}.patterns=`)[1].split('*/')[0],
           );
         } catch (err) {
           console.error(
-            'Syntax error: ' +
-              statics.SWAGGER_TAG +
-              '.patterns' +
-              aData.split(statics.SWAGGER_TAG + '.patterns')[1].split('*/')[0]
+            `Syntax error: ${statics.SWAGGER_TAG}.patterns${
+              aData.split(`${statics.SWAGGER_TAG}.patterns`)[1].split('*/')[0]
+            }`,
           );
           console.error(err);
           return resolve(false);
@@ -197,8 +191,8 @@ function readEndpointFile(
             pattern.split(
               new RegExp(
                 '\\!|\\=|\\<|\\>|\\,|\\;|\\:|\\{|\\}|\\(|\\)|\\[|\\]|axios|superagent|request|fetch|supertest',
-                'i'
-              )
+                'i',
+              ),
             ).length > 1
           ) {
             return;
@@ -208,13 +202,10 @@ function readEndpointFile(
             firstPattern = pattern;
           }
 
-          let keywords = [...statics.METHODS];
+          const keywords = [...statics.METHODS];
           keywords.forEach(
             word =>
-              (regex +=
-                `(\\s|\\n|\\t|;|\\*\\/)${pattern}\\s*\\n*\\t*\\.\\s*\\n*\\t*` +
-                word +
-                '\\s*\\n*\\t*\\(|')
+              (regex += `(\\s|\\n|\\t|;|\\*\\/)${pattern}\\s*\\n*\\t*\\.\\s*\\n*\\t*${word}\\s*\\n*\\t*\\(|`),
           );
 
           regexRouteMiddlewares += `\\/?\\s*\\n*\\t*${pattern}\\s*\\n*\\t*\\.\\s*\\n*\\t*use\\s*\\n*\\t*\\(|`;
@@ -228,12 +219,12 @@ function readEndpointFile(
          */
 
         let serverVars = [];
-        let patterns = new Set(patternsServer);
+        const patterns = new Set(patternsServer);
 
         serverVars = dataToGetPatterns.split(new RegExp(regex));
         if (serverVars && serverVars.length > 1)
           serverVars.forEach(pattern => {
-            let auxPattern = pattern
+            const auxPattern = pattern
               .split(new RegExp(regex))[0]
               .split(/\n|\s|\t|';'|\{|\}|\(|\)|\[|\]/)
               .splice(-1)[0]; // e.g.: app, route, server, etc.
@@ -248,8 +239,8 @@ function readEndpointFile(
             pattern.split(
               new RegExp(
                 '\\!|\\=|\\<|\\>|\\,|\\;|\\:|\\{|\\}|\\(|\\)|\\[|\\]|axios|superagent|request|fetch|supertest',
-                'i'
-              )
+                'i',
+              ),
             ).length > 1
           ) {
             return;
@@ -258,13 +249,10 @@ function readEndpointFile(
             firstPattern = pattern;
           }
 
-          let keywords = [...statics.METHODS, 'route'];
+          const keywords = [...statics.METHODS, 'route'];
           keywords.forEach(
             word =>
-              (regex +=
-                `(\\s|\\n|\\t|;|\\*\\/)${pattern}\\s*\\n*\\t*\\.\\s*\\n*\\t*` +
-                word +
-                '\\s*\\n*\\t*\\(|')
+              (regex += `(\\s|\\n|\\t|;|\\*\\/)${pattern}\\s*\\n*\\t*\\.\\s*\\n*\\t*${word}\\s*\\n*\\t*\\(|`),
           );
 
           regexRouteMiddlewares += `(\\/?\\s*\\n*\\t*${pattern}\\s*\\n*\\t*\\.\\s*\\n*\\t*use\\s*\\n*\\t*\\(\\s*\\n*\\t*)|`;
@@ -277,28 +265,28 @@ function readEndpointFile(
 
       let aForcedsEndpoints = swaggerTags.getForcedEndpoints(aData, { filePath });
       aForcedsEndpoints = aForcedsEndpoints.map(forced => {
-        return (forced += '\n' + statics.STRING_BREAKER + 'FORCED' + statics.STRING_BREAKER + '\n');
+        return (forced += `\n${statics.STRING_BREAKER}FORCED${statics.STRING_BREAKER}\n`);
       });
 
       /**
        * routeMiddlewares: This will cause the middleware to be passed on to all sub-routes
        */
-      let routeMiddlewares = [
+      const routeMiddlewares = [
         ...receivedRouteMiddlewares.map(r => {
           r.path = false;
           r.fixedRoute = true;
           r.bytePosition = -1;
           return r;
-        })
+        }),
       ];
 
       /**
        * CASE: router.use(middleware).get(...).post(...).put(...)...
        * REFACTOR: pass to function
        */
-      let rawRouteMiddlewares = aData.split(new RegExp(regexRouteMiddlewares));
+      const rawRouteMiddlewares = aData.split(new RegExp(regexRouteMiddlewares));
       rawRouteMiddlewares.shift();
-      let localRouteMiddlewares = []; // localRouteMiddlewares: Used to store and to apply middleware's route in the local endpoints
+      const localRouteMiddlewares = []; // localRouteMiddlewares: Used to store and to apply middleware's route in the local endpoints
 
       aData = await handleData.addReferenceToMethods(aData, patternsServer);
 
@@ -382,7 +370,7 @@ function readEndpointFile(
             rawPathResolved,
             bytePosition,
             jsParsed,
-            importedFiles
+            importedFiles,
           );
 
           let endpointSwaggers = null;
@@ -415,15 +403,15 @@ function readEndpointFile(
 
             // CASE: router.use(middleware).get(...).post(...).put(...)...
             if (elem[6] && elem[6].includes('____CHAINED____')) {
-              let midd = elem[6].split('____CHAINED____')[0];
+              const midd = elem[6].split('____CHAINED____')[0];
               localRouteMiddlewares.push({
                 middleware: midd,
-                rawRoute: aData[idxElem].split(midd)[1]
+                rawRoute: aData[idxElem].split(midd)[1],
               });
               continue;
             }
 
-            let prefixFound = propRoutes.find(r => r.routeName === predefPattern);
+            const prefixFound = propRoutes.find(r => r.routeName === predefPattern);
             if (prefixFound) {
               routePrefix = prefixFound.prefix || '';
             } else {
@@ -432,13 +420,13 @@ function readEndpointFile(
 
             if (elem.length < 5) {
               // Forced Endpoint
-              let found = elem.find(e => e.includes('/_undefined_path_0x'));
+              const found = elem.find(e => e.includes('/_undefined_path_0x'));
               if (found) {
                 elem = found;
                 endpointFunctions.push({
                   metadata: null,
                   callbackParameters: null,
-                  func: found
+                  func: found,
                 });
               } else {
                 continue;
@@ -462,14 +450,14 @@ function readEndpointFile(
           if (isChained) {
             const endpointRegex = `\\(\\[\\_\\[${predefMethod}\\]\\_\\]\\)\\(\\[\\_\\[____CHAINED____\\]\\_\\]\\)\\(\\[\\_\\[${bytePosition}\\]\\_\\]\\)\\(\\s*\\n*\\t*${rawPath}\\s*\\n*\\t*\\,`;
             const found = localRouteMiddlewares.find(
-              midd => midd.rawRoute && midd.rawRoute.split(new RegExp(endpointRegex)).length > 1
+              midd => midd.rawRoute && midd.rawRoute.split(new RegExp(endpointRegex)).length > 1,
             );
             if (found) {
-              elem += ',' + found.middleware;
+              elem += `,${found.middleware}`;
             }
           }
 
-          if (elem.includes(statics.STRING_BREAKER + 'FORCED' + statics.STRING_BREAKER)) {
+          if (elem.includes(`${statics.STRING_BREAKER}FORCED${statics.STRING_BREAKER}`)) {
             forced = true;
           }
 
@@ -522,7 +510,7 @@ function readEndpointFile(
                   functionsStr &&
                   functionsStr.split(new RegExp('\\s*\\t*=>\\s*\\n*\\t*').length > 1)
                 ) {
-                  let params = functionsStr.trim().split(new RegExp('\\s*\\t*=>\\s*\\n*\\t*'));
+                  const params = functionsStr.trim().split(new RegExp('\\s*\\t*=>\\s*\\n*\\t*'));
                   if (params && params.length > 1 && params[0].trim().slice(-1)[0] !== ')') {
                     let paramsAux = params[0].split(new RegExp('\\s+|\\n+|\\t+|\\,|\\.|\\;|\\:'));
                     paramsAux = paramsAux.slice(-1)[0];
@@ -532,12 +520,12 @@ function readEndpointFile(
                     )
                       functionsStr = functionsStr.replace(
                         new RegExp(`${paramsAux}\\s*\\t*=>\\s*\\n*\\t*`),
-                        `(${paramsAux}) => `
+                        `(${paramsAux}) => `,
                       );
                   }
                 }
 
-                let funcNotReferenced = await handleData.popFunction(functionsStr);
+                const funcNotReferenced = await handleData.popFunction(functionsStr);
                 if (predefMethod == 'use' && funcNotReferenced) {
                   if (funcNotReferenced.split(')')[0].split(',').length > 2) {
                     let isLocalRouteMiddleware = false;
@@ -552,7 +540,7 @@ function readEndpointFile(
                       middleware: true,
                       path: rawPathResolved === '' ? false : rawPathResolved,
                       isLocalRouteMiddleware,
-                      bytePosition
+                      bytePosition,
                     });
                     functionsStr = functionsStr.replace(funcNotReferenced, ' ');
                   }
@@ -565,13 +553,13 @@ function readEndpointFile(
                    */
                   if (funcNotReferenced.trim()[0] == '(') {
                     // there are parameters
-                    let funcNotRefFormated = funcNotReferenced
+                    const funcNotRefFormated = funcNotReferenced
                       .replaceAll('(', '( ')
                       .replaceAll(')', ' )');
                     let funcParams = await utils.stack0SymbolRecognizer(
                       funcNotRefFormated,
                       '(',
-                      ')'
+                      ')',
                     );
                     let regexParams = '';
 
@@ -579,8 +567,8 @@ function readEndpointFile(
                       funcParams = funcParams.split(
                         new RegExp(
                           '\\:\\s*\\n*\\t*Request\\s*\\n*\\t*|\\:\\s*\\n*\\t*Response\\s*\\n*\\t*|\\:\\s*\\n*\\t*Next\\s*\\n*\\t*|\\:\\s*\\n*\\t*any\\s*\\n*\\t*',
-                          'i'
-                        )
+                          'i',
+                        ),
                       );
                       let tsFunction = false;
                       if (funcParams.length > 1) {
@@ -592,7 +580,7 @@ function readEndpointFile(
                         .replaceAll('\n', '')
                         .replaceAll(' ', '')
                         .split(',');
-                      let numParams = funcParams.length;
+                      const numParams = funcParams.length;
 
                       for (let idx = 0; idx < numParams; ++idx) {
                         regexParams += `\\([\\w|\\s]*\\,?[\\w|\\s]*\\,?[\\w|\\s]*[\\s|\\,]+${funcParams[idx]}[\\s|\\,]+[\\w|\\s]*\\,?[\\w|\\s]*\\,?[\\w|\\s]*\\)|`;
@@ -630,9 +618,9 @@ function readEndpointFile(
                   if (functionsStr && functionsStr.split(funcNotReferenced).length > 1) {
                     functionsStr = functionsStr.replace(funcNotReferenced, ' ');
                   } else {
-                    let params = await utils.stack0SymbolRecognizer(funcNotReferenced, '(', ')');
-                    if (params && functionsStr.split('(' + params + ')').length > 1) {
-                      functionsStr = functionsStr.replace('(' + params + ')', ' ');
+                    const params = await utils.stack0SymbolRecognizer(funcNotReferenced, '(', ')');
+                    if (params && functionsStr.split(`(${params})`).length > 1) {
+                      functionsStr = functionsStr.replace(`(${params})`, ' ');
                     } else {
                       // TODO: verify this case
                     }
@@ -642,7 +630,7 @@ function readEndpointFile(
                     endpointFunctions.push({
                       metadata: null,
                       callbackParameters: null,
-                      func: funcNotReferenced
+                      func: funcNotReferenced,
                     });
                   }
                 } else {
@@ -665,7 +653,7 @@ function readEndpointFile(
                 continue;
               }
 
-              let funcTest = func.replaceAll('\n', '').replaceAll('\t', '').replaceAll(' ', '');
+              const funcTest = func.replaceAll('\n', '').replaceAll('\t', '').replaceAll(' ', '');
               if (funcTest == '' || funcTest == ')') {
                 continue;
               }
@@ -694,21 +682,18 @@ function readEndpointFile(
                 exportPath = exportPath.split(')')[0];
                 if (exportPath && exportPath.includes('./')) {
                   if (exportPath.includes('../')) {
-                    let foldersToBack = exportPath.split('../').length - 1;
+                    const foldersToBack = exportPath.split('../').length - 1;
                     let RelativePathBacked = relativePath.split('/');
                     RelativePathBacked = RelativePathBacked.slice(0, -1 * foldersToBack);
                     RelativePathBacked = RelativePathBacked.join('/');
 
-                    exportPath =
-                      RelativePathBacked +
-                      '/' +
-                      exportPath
-                        .replaceAll("'", '')
-                        .replaceAll('"', '')
-                        .replaceAll('`', '')
-                        .replaceAll(' ', '')
-                        .replaceAll('\n', '')
-                        .replaceAll('../', '');
+                    exportPath = `${RelativePathBacked}/${exportPath
+                      .replaceAll("'", '')
+                      .replaceAll('"', '')
+                      .replaceAll('`', '')
+                      .replaceAll(' ', '')
+                      .replaceAll('\n', '')
+                      .replaceAll('../', '')}`;
                   } else {
                     exportPath =
                       relativePath +
@@ -736,7 +721,7 @@ function readEndpointFile(
                  * router.method('/path', fooFoo('foo') )
                  */
                 if (func.includes('(') && func.includes(')')) {
-                  let params = await utils.stack0SymbolRecognizer(func, '(', ')'); // TODO: get array with all strings and try to find with each one
+                  const params = await utils.stack0SymbolRecognizer(func, '(', ')'); // TODO: get array with all strings and try to find with each one
                   if (params && (params[0] == '"' || params[0] == "'" || params[0] == '`')) {
                     refFuncInParam = params
                       .replaceAll('"', '')
@@ -764,7 +749,7 @@ function readEndpointFile(
 
                 // First, tries to find in the import/require
                 idx = importedFiles.findIndex(
-                  e => e.varFileName && varFileName && e.varFileName == varFileName
+                  e => e.varFileName && varFileName && e.varFileName == varFileName,
                 );
                 if (idx == -1) {
                   // Second, tries to find in the 'exports' of import/require, such as 'foo' in the: import { foo } from './fooFile'
@@ -777,7 +762,7 @@ function readEndpointFile(
                     let found =
                       imp && imp.exports
                         ? imp.exports.find(
-                            e => e.varAlias && varFileName && e.varAlias == varFileName
+                            e => e.varAlias && varFileName && e.varAlias == varFileName,
                           )
                         : null;
 
@@ -785,7 +770,7 @@ function readEndpointFile(
                       found =
                         imp && imp.exports
                           ? imp.exports.find(
-                              e => e.varName && varFileName && e.varName == varFileName
+                              e => e.varName && varFileName && e.varName == varFileName,
                             )
                           : null;
                     } else {
@@ -798,10 +783,8 @@ function readEndpointFile(
                       imp.isDirectory ? (exportPath = found.path) : (exportPath = imp.fileName); // TODO: change variable name
                     }
                   });
-                } else {
-                  if (importedFiles[idx].isDirectory && !importedFiles[idx].isRequireDirLib) {
-                    exportPath = importedFiles[idx].fileName + '/index';
-                  }
+                } else if (importedFiles[idx].isDirectory && !importedFiles[idx].isRequireDirLib) {
+                  exportPath = `${importedFiles[idx].fileName}/index`;
                 }
               }
 
@@ -813,24 +796,22 @@ function readEndpointFile(
                 let pathFile = null;
                 if (exportPath) {
                   pathFile = exportPath;
+                } else if (
+                  importedFiles[idx] &&
+                  importedFiles[idx].isRequireDirLib &&
+                  func &&
+                  func.split('.').length == 3
+                ) {
+                  functionName = func.split('.')[2].trim();
+                  pathFile = `${importedFiles[idx].fileName}/${func.split('.')[1].trim()}`;
                 } else {
-                  if (
-                    importedFiles[idx] &&
-                    importedFiles[idx].isRequireDirLib &&
-                    func &&
-                    func.split('.').length == 3
-                  ) {
-                    functionName = func.split('.')[2].trim();
-                    pathFile = importedFiles[idx].fileName + '/' + func.split('.')[1].trim();
-                  } else {
-                    pathFile = importedFiles[idx].fileName;
-                  }
+                  pathFile = importedFiles[idx].fileName;
                 }
 
                 let extension = await utils.getExtension(pathFile);
                 let refFunction = await functionRecognizerInFile(
                   pathFile + extension,
-                  functionName
+                  functionName,
                 );
 
                 // Trying to find the reference in the index file
@@ -842,12 +823,12 @@ function readEndpointFile(
                   pathFile.split('/').length > 1 &&
                   pathFile.split('/').slice(-1)[0] == 'index'
                 ) {
-                  let dataIndexFile = await utils.getFileContent(pathFile + extension);
+                  const dataIndexFile = await utils.getFileContent(pathFile + extension);
                   if (dataIndexFile) {
                     pathFile = pathFile.split('/').slice(0, -1).join('/'); // removing '/index'
-                    let importsIndexFile = await getImportedFiles(dataIndexFile, pathFile);
-                    let idx = importsIndexFile.findIndex(
-                      e => e.varFileName && functionName && e.varFileName == functionName
+                    const importsIndexFile = await getImportedFiles(dataIndexFile, pathFile);
+                    const idx = importsIndexFile.findIndex(
+                      e => e.varFileName && functionName && e.varFileName == functionName,
                     );
                     pathFile = null;
                     if (idx == -1) {
@@ -855,10 +836,10 @@ function readEndpointFile(
                         if (pathFile) {
                           return;
                         }
-                        let found =
+                        const found =
                           imp && imp.exports
                             ? imp.exports.find(
-                                e => e.varName && functionName && e.varName == functionName
+                                e => e.varName && functionName && e.varName == functionName,
                               )
                             : null;
                         if (found) {
@@ -879,18 +860,18 @@ function readEndpointFile(
                       extension = await utils.getExtension(pathFile);
                       refFunction = await functionRecognizerInFile(
                         pathFile + extension,
-                        functionName
+                        functionName,
                       );
                     }
                   }
                 }
 
                 if (!refFunction && refFuncInParam) {
-                  let fileContent = await utils.getFileContent(pathFile + extension);
+                  const fileContent = await utils.getFileContent(pathFile + extension);
                   if (fileContent && fileContent.includes('awilix-express'))
                     refFunction = await functionRecognizerInFile(
                       pathFile + extension,
-                      refFuncInParam
+                      refFuncInParam,
                     );
                 }
 
@@ -911,8 +892,8 @@ function readEndpointFile(
                       dataIndexFile = dataIndexFile.split('import').join('__ignored__');
                       dataIndexFile = dataIndexFile.split('export').join('import');
 
-                      let exportsIndexFile = await getImportedFiles(dataIndexFile, pathFile);
-                      let idx = -1;
+                      const exportsIndexFile = await getImportedFiles(dataIndexFile, pathFile);
+                      const idx = -1;
 
                       /**
                        * TODO: searching in the varFileName
@@ -925,7 +906,7 @@ function readEndpointFile(
                           if (pathFile) {
                             return;
                           }
-                          let found =
+                          const found =
                             imp && imp.exports
                               ? imp.exports.find(e => e.varAlias && e.varAlias == 'default')
                               : null;
@@ -941,7 +922,7 @@ function readEndpointFile(
                         extension = await utils.getExtension(pathFile);
                         refFunction = await functionRecognizerInFile(
                           pathFile + extension,
-                          functionName
+                          functionName,
                         );
                       }
                     }
@@ -969,7 +950,7 @@ function readEndpointFile(
                       middleware: true,
                       path: rawPathResolved === '' ? false : rawPathResolved,
                       isLocalRouteMiddleware,
-                      bytePosition
+                      bytePosition,
                     });
                   }
                 } else if (refFunction) {
@@ -977,13 +958,13 @@ function readEndpointFile(
                   endpointFunctions.push({
                     metadata: func,
                     callbackParameters: null,
-                    func: refFunction
+                    func: refFunction,
                   });
                 } else if (!refFunction && functionName) {
                   endpointFunctions.push({
                     metadata: '',
                     callbackParameters: null,
-                    func: ''
+                    func: '',
                   });
                 }
               } else {
@@ -1008,7 +989,7 @@ function readEndpointFile(
                       middleware: true,
                       path: rawPathResolved === '' ? false : rawPathResolved,
                       isLocalRouteMiddleware,
-                      bytePosition
+                      bytePosition,
                     });
                   }
                 } else if (refFunction) {
@@ -1016,7 +997,7 @@ function readEndpointFile(
                   endpointFunctions.push({
                     metadata: func,
                     callbackParameters: null,
-                    func: refFunction
+                    func: refFunction,
                   });
                 }
               }
@@ -1030,7 +1011,7 @@ function readEndpointFile(
           /**
            * endpointFunctions: receives the endpoint functions, local middleware and received middlewares
            */
-          let localPath = swaggerTags.getPath(elemOrig, true);
+          const localPath = swaggerTags.getPath(elemOrig, true);
 
           endpointFunctions = [
             ...routeMiddlewares.filter(r => {
@@ -1045,13 +1026,13 @@ function readEndpointFile(
               }
               return false;
             }),
-            ...endpointFunctions
+            ...endpointFunctions,
           ];
 
           // Getting  'request', 'response' and 'next' parameters in the endpointFunctions
           for (let efIdx = 0; efIdx < endpointFunctions.length; ++efIdx) {
-            let ef = endpointFunctions[efIdx];
-            const callbackParameters = await handleData.getCallbackParameters(',' + ef.func);
+            const ef = endpointFunctions[efIdx];
+            const callbackParameters = await handleData.getCallbackParameters(`,${ef.func}`);
             ef.callbackParameters = callbackParameters;
             endpointFunctions[efIdx] = ef;
           }
@@ -1060,7 +1041,7 @@ function readEndpointFile(
             endpointFunctions.push({
               metadata: null,
               callbackParameters: null,
-              func: endpointSwaggers
+              func: endpointSwaggers,
             });
 
           // Getting Path
@@ -1074,7 +1055,7 @@ function readEndpointFile(
 
               path = pathRoute + routePrefix + rawPathResolved;
               path = path.split('/').map(p => {
-                if (p.includes(':')) p = '{' + p.replace(':', '') + '}';
+                if (p.includes(':')) p = `{${p.replace(':', '')}}`;
                 return p;
               });
               path = path.join('/');
@@ -1114,7 +1095,7 @@ function readEndpointFile(
             if (path.includes('_undefined_path_0x'))
               // When the path is not found
               objEndpoint[path][method].tags.push({
-                name: 'Endpoints without path or method'
+                name: 'Endpoints without path or method',
               });
           }
 
@@ -1123,14 +1104,14 @@ function readEndpointFile(
           }
 
           // Used in logs
-          let reference = { filePath, predefPattern, method, path };
+          const reference = { filePath, predefPattern, method, path };
 
           /**
            * Handling all endpoint functions
            */
           if (endpointFunctions && endpointFunctions.length == 0) {
             paths = merge(paths, objEndpoint, {
-              arrayMerge: overwriteMerge
+              arrayMerge: overwriteMerge,
             });
           } else {
             let objInBody = null;
@@ -1145,7 +1126,7 @@ function readEndpointFile(
                 .replaceAll('\n', ' ')
                 .replaceAll('/*', '\n')
                 .replaceAll('*/', '\n')
-                .replaceAll(statics.SWAGGER_TAG, '\n' + statics.SWAGGER_TAG);
+                .replaceAll(statics.SWAGGER_TAG, `\n${statics.SWAGGER_TAG}`);
 
               req = null;
               res = null;
@@ -1160,7 +1141,7 @@ function readEndpointFile(
                     res = null;
                   }
                 } else {
-                  const callbackParameters = endpointFunctions[_idxEF].callbackParameters;
+                  const { callbackParameters } = endpointFunctions[_idxEF];
                   if (callbackParameters) {
                     req = callbackParameters.req;
                     res = callbackParameters.res;
@@ -1168,76 +1149,76 @@ function readEndpointFile(
                 }
               }
 
-              if (endpoint && endpoint.includes(statics.SWAGGER_TAG + '.auto')) {
+              if (endpoint && endpoint.includes(`${statics.SWAGGER_TAG}.auto`)) {
                 autoMode = swaggerTags.getAutoTag(endpoint);
               }
               if (autoMode && Object.entries(objParameters).length == 0) {
                 // Checking parameters in the path
                 objParameters = await handleData.getPathParameters(path, objParameters);
               }
-              if (endpoint && endpoint.includes(statics.SWAGGER_TAG + '.operationId')) {
-                objEndpoint[path][method]['operationId'] = swaggerTags.getOperationId(
+              if (endpoint && endpoint.includes(`${statics.SWAGGER_TAG}.operationId`)) {
+                objEndpoint[path][method].operationId = swaggerTags.getOperationId(
                   endpoint,
-                  reference
+                  reference,
                 );
               }
-              if (endpoint && endpoint.includes(statics.SWAGGER_TAG + '.summary')) {
-                objEndpoint[path][method]['summary'] = swaggerTags.getSummary(endpoint, reference);
+              if (endpoint && endpoint.includes(`${statics.SWAGGER_TAG}.summary`)) {
+                objEndpoint[path][method].summary = swaggerTags.getSummary(endpoint, reference);
               }
               if (
                 endpoint &&
-                endpoint.includes(statics.SWAGGER_TAG + '.parameters') &&
+                endpoint.includes(`${statics.SWAGGER_TAG}.parameters`) &&
                 endpoint.includes('[') &&
                 endpoint.includes(']')
               ) {
                 objParameters = await swaggerTags.getParametersTag(
                   endpoint,
                   objParameters,
-                  reference
+                  reference,
                 );
               }
-              if (endpoint && endpoint.includes(statics.SWAGGER_TAG + '.requestBody')) {
+              if (endpoint && endpoint.includes(`${statics.SWAGGER_TAG}.requestBody`)) {
                 objEndpoint[path][method].requestBody = await swaggerTags.getRequestBodyTag(
                   endpoint,
-                  reference
+                  reference,
                 );
               }
               if (!swaggerTags.getOpenAPI()) {
-                if (endpoint && endpoint.includes(statics.SWAGGER_TAG + '.produces')) {
+                if (endpoint && endpoint.includes(`${statics.SWAGGER_TAG}.produces`)) {
                   objEndpoint[path][method].produces = await swaggerTags.getProducesTag(
                     endpoint,
-                    reference
+                    reference,
                   );
                 }
-                if (endpoint && endpoint.includes(statics.SWAGGER_TAG + '.consumes')) {
+                if (endpoint && endpoint.includes(`${statics.SWAGGER_TAG}.consumes`)) {
                   objEndpoint[path][method].consumes = await swaggerTags.getConsumesTag(
                     endpoint,
-                    reference
+                    reference,
                   );
                 }
               }
-              if (endpoint && endpoint.includes(statics.SWAGGER_TAG + '.responses')) {
+              if (endpoint && endpoint.includes(`${statics.SWAGGER_TAG}.responses`)) {
                 objResponses = await swaggerTags.getResponsesTag(endpoint, objResponses, reference);
               }
-              if (endpoint && endpoint.includes(statics.SWAGGER_TAG + '.description')) {
-                objEndpoint[path][method]['description'] = swaggerTags.getDescription(
+              if (endpoint && endpoint.includes(`${statics.SWAGGER_TAG}.description`)) {
+                objEndpoint[path][method].description = swaggerTags.getDescription(
                   endpoint,
-                  reference
+                  reference,
                 );
               }
-              if (endpoint && endpoint.includes(statics.SWAGGER_TAG + '.tags')) {
-                objEndpoint[path][method]['tags'] = swaggerTags.getTags(endpoint, reference);
+              if (endpoint && endpoint.includes(`${statics.SWAGGER_TAG}.tags`)) {
+                objEndpoint[path][method].tags = swaggerTags.getTags(endpoint, reference);
               }
-              if (endpoint && endpoint.includes(statics.SWAGGER_TAG + '.security')) {
-                objEndpoint[path][method]['security'] = await swaggerTags.getSecurityTag(
+              if (endpoint && endpoint.includes(`${statics.SWAGGER_TAG}.security`)) {
+                objEndpoint[path][method].security = await swaggerTags.getSecurityTag(
                   endpoint,
-                  reference
+                  reference,
                 );
               }
-              if (endpoint && endpoint.includes(statics.SWAGGER_TAG + '.deprecated')) {
-                objEndpoint[path][method]['deprecated'] = swaggerTags.getDeprecatedTag(
+              if (endpoint && endpoint.includes(`${statics.SWAGGER_TAG}.deprecated`)) {
+                objEndpoint[path][method].deprecated = swaggerTags.getDeprecatedTag(
                   endpoint,
-                  reference
+                  reference,
                 );
               }
 
@@ -1245,8 +1226,8 @@ function readEndpointFile(
                 return resolve(false);
 
               if (autoMode && endpoint && ((req && req.length > 0) || (res && res.length > 0))) {
-                let hasOwnProperties = endpoint.split(
-                  new RegExp('\\s*\\.\\s*hasOwnProperty\\s*\\(')
+                const hasOwnProperties = endpoint.split(
+                  new RegExp('\\s*\\.\\s*hasOwnProperty\\s*\\('),
                 );
                 if (hasOwnProperties && hasOwnProperties.length > 1) {
                   hasOwnProperties.shift();
@@ -1256,10 +1237,10 @@ function readEndpointFile(
                       .replaceAll("'", '')
                       .replaceAll('`', '')
                       .replaceAll(' ', '');
-                    varName = '.' + varName.split(')')[0];
+                    varName = `.${varName.split(')')[0]}`;
                     endpoint = endpoint.replace(
                       new RegExp('\\s*\\.\\s*hasOwnProperty\\s*\\('),
-                      varName
+                      varName,
                     );
                   });
                 }
@@ -1268,25 +1249,25 @@ function readEndpointFile(
                 endpoint = endpoint.replaceAll('__¬¬¬__', '"');
                 if (req) {
                   objParameters = handleData.getHeaderQueryBody(endpoint, req, objParameters); // Search for parameters in the query and body
-                  if (method === 'get' && objParameters['__obj__in__body__']) {
-                    delete objParameters['__obj__in__body__'];
+                  if (method === 'get' && objParameters.__obj__in__body__) {
+                    delete objParameters.__obj__in__body__;
                   }
                   objParameters = handleData.getQueryIndirectly(endpoint, req, objParameters); // Search for parameters in the query (indirectly)
-                  if (objParameters['__obj__in__body__']) {
+                  if (objParameters.__obj__in__body__) {
                     if (!objInBody) {
-                      objInBody = objParameters['__obj__in__body__'];
+                      objInBody = objParameters.__obj__in__body__;
                     } else if (
                       objInBody.schema &&
                       objInBody.schema.properties &&
-                      objParameters['__obj__in__body__'].schema &&
-                      objParameters['__obj__in__body__'].schema.properties
+                      objParameters.__obj__in__body__.schema &&
+                      objParameters.__obj__in__body__.schema.properties
                     ) {
                       objInBody.schema.properties = {
                         ...objInBody.schema.properties,
-                        ...objParameters['__obj__in__body__'].schema.properties
+                        ...objParameters.__obj__in__body__.schema.properties,
                       };
                     }
-                    delete objParameters['__obj__in__body__'];
+                    delete objParameters.__obj__in__body__;
                   }
                 }
                 if (res) {
@@ -1297,8 +1278,8 @@ function readEndpointFile(
 
               Object.values(objParameters).forEach(objParam => {
                 if (objEndpoint[path][method].parameters) {
-                  let idxFound = objEndpoint[path][method].parameters.findIndex(
-                    e => e.name === objParam.name && e.in === objParam.in
+                  const idxFound = objEndpoint[path][method].parameters.findIndex(
+                    e => e.name === objParam.name && e.in === objParam.in,
                   );
                   if (objParam.name) {
                     objParam.name = objParam.name.split('__[__[__')[0];
@@ -1324,8 +1305,8 @@ function readEndpointFile(
               ) {
                 objEndpoint[path][method].requestBody = {
                   content: {
-                    'application/json': { schema: objInBody.schema }
-                  }
+                    'application/json': { schema: objInBody.schema },
+                  },
                 };
                 if (
                   objEndpoint[path][method].parameters &&
@@ -1355,14 +1336,14 @@ function readEndpointFile(
                   objEndpoint[path][method].parameters.length > 0 &&
                   objEndpoint[path][method].parameters.find(e => e.in === 'body')
                 ) {
-                  let body = objEndpoint[path][method].parameters.find(e => e.in === 'body');
+                  const body = objEndpoint[path][method].parameters.find(e => e.in === 'body');
                   if (
                     objInBody &&
                     objInBody.schema &&
                     body &&
                     body.schema &&
                     body.schema.properties &&
-                    body.schema.properties['__AUTO_GENERATE__'] &&
+                    body.schema.properties.__AUTO_GENERATE__ &&
                     Object.keys(body.schema.properties).length == 0
                   ) {
                     delete body.schema;
@@ -1372,7 +1353,7 @@ function readEndpointFile(
                     body &&
                     body.schema &&
                     body.schema.properties &&
-                    body.schema.properties['__AUTO_GENERATE__']
+                    body.schema.properties.__AUTO_GENERATE__
                   ) {
                     delete body.schema;
                   }
@@ -1384,7 +1365,7 @@ function readEndpointFile(
                   ) {
                     objEndpoint[path][method].parameters[0] = {
                       ...objInBody,
-                      ...body
+                      ...body,
                     };
                   }
                 } else if (objEndpoint[path][method] && !objEndpoint[path][method].requestBody) {
@@ -1392,10 +1373,10 @@ function readEndpointFile(
                 }
               }
 
-              let parameters = objEndpoint[path][method].parameters;
+              const { parameters } = objEndpoint[path][method];
               if (parameters && parameters.length > 0) {
                 objEndpoint[path][method].parameters = parameters.map(p => {
-                  if (p.schema && p.schema.properties && p.schema.properties['__AUTO_GENERATE__']) {
+                  if (p.schema && p.schema.properties && p.schema.properties.__AUTO_GENERATE__) {
                     p.schema.properties = {};
                   }
                   return p;
@@ -1409,12 +1390,12 @@ function readEndpointFile(
                   // Allow get, post, etc, in same path
                   paths[path] = {
                     ...paths[path],
-                    ...objEndpoint[path]
+                    ...objEndpoint[path],
                   };
                 } else {
                   paths = {
                     ...paths,
-                    ...objEndpoint
+                    ...objEndpoint,
                   };
                 }
               }
@@ -1426,26 +1407,26 @@ function readEndpointFile(
       let allPaths = {};
       if (aRoutes && aRoutes.length >= 1) {
         for (let file = 0; file < aRoutes.length; file++) {
-          let rt = aRoutes[file];
+          const rt = aRoutes[file];
           if (rt.split(']_])').length < 3) {
             continue;
           }
 
           let refFunc = null;
-          let obj = {
+          const obj = {
             path: null,
             varFileName: null,
             middleware: null,
             fileName: null,
-            isDirectory: null
+            isDirectory: null,
           };
           let data = rt.split(']_])(');
-          let routeName = data[1].split('[_[')[1].trim();
+          const routeName = data[1].split('[_[')[1].trim();
           let bytePosition = parseInt(data[2].split('[_[')[1]);
 
           data = await utils.stackSymbolRecognizer(data[3], '(', ')');
 
-          let routeFound = propRoutes.find(r => r.routeName === routeName);
+          const routeFound = propRoutes.find(r => r.routeName === routeName);
           if (routeFound) {
             routePrefix = routeFound.prefix || '';
           } else {
@@ -1472,21 +1453,18 @@ function readEndpointFile(
             exportPath = exportPath.split(')')[0];
             if (exportPath && exportPath.includes('./')) {
               if (exportPath.includes('../')) {
-                let foldersToBack = exportPath.split('../').length - 1;
+                const foldersToBack = exportPath.split('../').length - 1;
                 let RelativePathBacked = relativePath.split('/');
                 RelativePathBacked = RelativePathBacked.slice(0, -1 * foldersToBack);
                 RelativePathBacked = RelativePathBacked.join('/');
 
-                exportPath =
-                  RelativePathBacked +
-                  '/' +
-                  exportPath
-                    .replaceAll("'", '')
-                    .replaceAll('"', '')
-                    .replaceAll('`', '')
-                    .replaceAll(' ', '')
-                    .replaceAll('\n', '')
-                    .replaceAll('../', '');
+                exportPath = `${RelativePathBacked}/${exportPath
+                  .replaceAll("'", '')
+                  .replaceAll('"', '')
+                  .replaceAll('`', '')
+                  .replaceAll(' ', '')
+                  .replaceAll('\n', '')
+                  .replaceAll('../', '')}`;
               } else {
                 exportPath =
                   relativePath +
@@ -1499,12 +1477,13 @@ function readEndpointFile(
                     .replaceAll('./', '/');
               }
               obj.hasRequire = true;
-              const isDirectory =
-                fs.existsSync(exportPath) && fs.lstatSync(exportPath).isDirectory() ? true : false;
+              const isDirectory = !!(
+                fs.existsSync(exportPath) && fs.lstatSync(exportPath).isDirectory()
+              );
               if (isDirectory) {
                 obj.isDirectory = true;
                 // TODO: Verify other cases
-                exportPath = exportPath + '/index';
+                exportPath += '/index';
               }
             }
           }
@@ -1520,26 +1499,26 @@ function readEndpointFile(
               e =>
                 e.varFileName &&
                 rawPath.split('.')[0].trim() &&
-                e.varFileName == rawPath.split('.')[0].trim()
+                e.varFileName == rawPath.split('.')[0].trim(),
             )
           ) {
             // let functionName = rawPath.split('.')[1].trim();
-            let varFileName = rawPath.split('.')[0].trim();
+            const varFileName = rawPath.split('.')[0].trim();
 
-            let found = importedFiles.find(
-              e => e.varFileName && varFileName && e.varFileName == varFileName
+            const found = importedFiles.find(
+              e => e.varFileName && varFileName && e.varFileName == varFileName,
             );
             if (found) {
               // Variable in other file
-              let extension = await utils.getExtension(found.fileName);
+              const extension = await utils.getExtension(found.fileName);
               let content = await utils.getFileContent(found.fileName + extension);
               if (content) {
                 // Try to find the variable
                 content = await handleData.removeComments(content);
-                let jsParsedContent = await codeParser.jsParserEsModule(content);
+                const jsParsedContent = await codeParser.jsParserEsModule(content);
                 if (jsParsedContent && jsParsedContent.variables.length > 0) {
-                  let found = jsParsedContent.variables.filter(
-                    v => v.name == rawPath.split('.')[1]
+                  const found = jsParsedContent.variables.filter(
+                    v => v.name == rawPath.split('.')[1],
                   );
                   if (found && found[0] && found[0].end) {
                     bytePosition = found[0].end;
@@ -1547,7 +1526,7 @@ function readEndpointFile(
                       rawPath.split('.')[1],
                       bytePosition,
                       jsParsedContent,
-                      importedFiles
+                      importedFiles,
                     );
                     data = data.replace(rawPath, ''); // removing path
                   }
@@ -1567,7 +1546,7 @@ function readEndpointFile(
               rawPath,
               bytePosition,
               jsParsed,
-              importedFiles
+              importedFiles,
             );
             data = data.replace(rawPath, ''); // removing path
           }
@@ -1578,13 +1557,13 @@ function readEndpointFile(
           dataAux = await handleData.removeInsideParentheses(dataAux, true);
           dataAux = dataAux.split(',');
           for (let idx = 0; idx < dataAux.length; ++idx) {
-            let param = dataAux[idx];
+            const param = dataAux[idx];
             if (param && param.trim()[0] != '(' && !rexRequire.test(param) && param.includes(')')) {
-              let functionName = param.split(')')[0];
-              let functionArguments = await utils.stackSymbolRecognizer(
+              const functionName = param.split(')')[0];
+              const functionArguments = await utils.stackSymbolRecognizer(
                 data.split(functionName)[1],
                 '(',
-                ')'
+                ')',
               );
               data = data.replace(functionArguments, ')');
               data = data.replaceAll('()', '');
@@ -1661,11 +1640,11 @@ function readEndpointFile(
                   listOfFileName[idxFileName] = listOfFileName[idxFileName].slice(0, -1);
                 }
                 listOfFileName[idxFileName] = listOfFileName[idxFileName].split(
-                  new RegExp('\\s*new\\s+')
+                  new RegExp('\\s*new\\s+'),
                 )[1];
                 if (listOfFileName[idxFileName].split(new RegExp('\\([\\s|\\S]*\\)')).length > 1) {
                   listOfFileName[idxFileName] = listOfFileName[idxFileName].split(
-                    new RegExp('\\([\\s|\\S]*\\)')
+                    new RegExp('\\([\\s|\\S]*\\)'),
                   );
                   listOfFileName[idxFileName] = listOfFileName[idxFileName].join('');
                 }
@@ -1712,7 +1691,7 @@ function readEndpointFile(
 
             // First, tries to find in the import/require
             let idx = importedFiles.findIndex(
-              e => e.varFileName && obj.varFileName && e.varFileName == obj.varFileName
+              e => e.varFileName && obj.varFileName && e.varFileName == obj.varFileName,
             );
 
             if (idx == -1 && !exportPath) {
@@ -1721,10 +1700,10 @@ function readEndpointFile(
                 if (exportPath) {
                   return;
                 }
-                let found =
+                const found =
                   imp && imp.exports
                     ? imp.exports.find(
-                        e => e.varName && obj.varFileName && e.varName == obj.varFileName
+                        e => e.varName && obj.varFileName && e.varName == obj.varFileName,
                       )
                     : null;
                 if (found) {
@@ -1748,18 +1727,18 @@ function readEndpointFile(
               obj.varFileName &&
               obj.varFileName.includes('.')
             ) {
-              let functionName = obj.varFileName.split('.')[1].trim();
-              let varFileName = obj.varFileName.split('.')[0].trim();
+              const functionName = obj.varFileName.split('.')[1].trim();
+              const varFileName = obj.varFileName.split('.')[0].trim();
 
-              let found = importedFiles.find(
-                e => e.varFileName && varFileName && e.varFileName == varFileName
+              const found = importedFiles.find(
+                e => e.varFileName && varFileName && e.varFileName == varFileName,
               );
               if (found) {
-                let extension = await utils.getExtension(found.fileName);
+                const extension = await utils.getExtension(found.fileName);
                 const content = await utils.getFileContent(found.fileName + extension);
                 if (content) {
                   // Trying to find the 'router' variable
-                  let varRouteFound = content
+                  const varRouteFound = content
                     .split(new RegExp('(const|let|var)(\\s+\\w+\\s*\\=\\s*Router\\(\\))'))
                     .find(e => e.replaceAll(' ', '').includes('=Router()'));
                   if (varRouteFound && varRouteFound.split('=')[0].trim() == functionName) {
@@ -1806,11 +1785,11 @@ function readEndpointFile(
               auxRelativePath = auxRelativePath.join('/');
 
               if (exportPath && importedFiles[idx] && importedFiles[idx].isDirectory) {
-                let resp = await utils.fileOrDirectoryExist(exportPath);
+                const resp = await utils.fileOrDirectoryExist(exportPath);
                 if (resp && resp.isDirectory) {
-                  let extension = await utils.getExtension(obj.fileName + '/index');
-                  let realFile = await utils.fileOrDirectoryExist(
-                    obj.fileName + '/index' + extension
+                  const extension = await utils.getExtension(`${obj.fileName}/index`);
+                  const realFile = await utils.fileOrDirectoryExist(
+                    `${obj.fileName}/index${extension}`,
                   );
                   if (realFile.isFile) {
                     exportPath = null;
@@ -1819,56 +1798,56 @@ function readEndpointFile(
               }
 
               if (idx > -1 && importedFiles[idx] && importedFiles[idx].isDirectory && !exportPath) {
-                let extension = await utils.getExtension(obj.fileName + '/index');
-                let auxPaths = await readEndpointFile(
-                  obj.fileName + '/index' + extension,
+                const extension = await utils.getExtension(`${obj.fileName}/index`);
+                const auxPaths = await readEndpointFile(
+                  `${obj.fileName}/index${extension}`,
                   obj.path || '',
                   obj.fileName,
                   obj.routeMiddlewares,
-                  null
+                  null,
                 );
                 if (auxPaths) {
                   allPaths = {
                     ...paths,
                     ...allPaths,
-                    ...auxPaths
+                    ...auxPaths,
                   };
                 } else {
                   allPaths = {
                     ...paths,
-                    ...allPaths
+                    ...allPaths,
                   };
                 }
               } else {
                 let refFunction = null;
-                let extension = await utils.getExtension(obj.fileName);
+                const extension = await utils.getExtension(obj.fileName);
 
                 if (refFunc) {
                   refFunction = await functionRecognizerInFile(obj.fileName + extension, refFunc);
                 }
 
-                let auxPaths = await readEndpointFile(
+                const auxPaths = await readEndpointFile(
                   obj.fileName + extension,
                   routePrefix + (obj.path || ''),
                   auxRelativePath,
                   obj.routeMiddlewares,
-                  refFunction
+                  refFunction,
                 );
                 if (auxPaths) {
                   allPaths = merge(paths, allPaths, {
-                    arrayMerge: overwriteMerge
+                    arrayMerge: overwriteMerge,
                   });
                   allPaths = merge(allPaths, auxPaths, {
-                    arrayMerge: overwriteMerge
+                    arrayMerge: overwriteMerge,
                   });
                 } else
                   allPaths = merge(paths, allPaths, {
-                    arrayMerge: overwriteMerge
+                    arrayMerge: overwriteMerge,
                   });
               }
             } else {
               allPaths = merge(paths, allPaths, {
-                arrayMerge: overwriteMerge
+                arrayMerge: overwriteMerge,
               });
             }
           }
@@ -1879,8 +1858,8 @@ function readEndpointFile(
       }
       return resolve(
         merge(paths, allPaths, {
-          arrayMerge: overwriteMerge
-        })
+          arrayMerge: overwriteMerge,
+        }),
       );
     });
   });
@@ -1892,14 +1871,14 @@ function readEndpointFile(
  * @param {string} relativePath
  */
 async function getImportedFiles(data, relativePath) {
-  let importedFiles = [];
+  const importedFiles = [];
   try {
-    let importeds = data.split(new RegExp(`import`, 'i'));
+    const importeds = data.split(new RegExp(`import`, 'i'));
     let requireds = data
       .replaceAll('\n', ' ')
       .split(new RegExp(`\\s*\\t*const\\s+|\\s*\\t*var\\s+|\\s*\\t*let\\s+`, 'i'));
     requireds = requireds.filter(
-      e => e.split(new RegExp(`=\\s*\\t*require\\s*\\t*\\(`, 'i')).length > 1
+      e => e.split(new RegExp(`=\\s*\\t*require\\s*\\t*\\(`, 'i')).length > 1,
     );
 
     // Such as: import foo, { Foo } from './foo'
@@ -1908,7 +1887,7 @@ async function getImportedFiles(data, relativePath) {
 
       // TODO: refactor this. Pass to outside
       let tsPaths = [];
-      let tsconfig = await utils.getFileContent(process.cwd() + '/tsconfig.json');
+      let tsconfig = await utils.getFileContent(`${process.cwd()}/tsconfig.json`);
       if (tsconfig) {
         tsconfig = await handleData.removeComments(tsconfig);
         tsconfig = JSON5.parse(tsconfig); // Allow trailing commas
@@ -1921,7 +1900,7 @@ async function getImportedFiles(data, relativePath) {
       }
 
       // Verify if .eslintrc
-      let eslintConfig = await utils.getFileContent(process.cwd() + '/.eslintrc');
+      let eslintConfig = await utils.getFileContent(`${process.cwd()}/.eslintrc`);
       if (eslintConfig) {
         eslintConfig = await handleData.removeComments(eslintConfig);
         eslintConfig = JSON5.parse(eslintConfig); // Allow trailing commas
@@ -1930,9 +1909,9 @@ async function getImportedFiles(data, relativePath) {
           eslintConfig.settings['import/resolver'] &&
           eslintConfig.settings['import/resolver']['babel-plugin-root-import']
         ) {
-          let rootPath = eslintConfig.settings['import/resolver']['babel-plugin-root-import'];
-          let rootPathPrefix = rootPath.rootPathPrefix;
-          let rootPathSuffix = rootPath.rootPathSuffix;
+          const rootPath = eslintConfig.settings['import/resolver']['babel-plugin-root-import'];
+          const { rootPathPrefix } = rootPath;
+          const { rootPathSuffix } = rootPath;
           if (rootPathPrefix && rootPathSuffix) {
             tsPaths.push([rootPathPrefix, [rootPathSuffix]]);
           }
@@ -1940,27 +1919,27 @@ async function getImportedFiles(data, relativePath) {
       }
 
       for (let index = 0; index < importeds.length; ++index) {
-        let imp = importeds[index];
-        let obj = {
+        const imp = importeds[index];
+        const obj = {
           varFileName: null,
           fileName: null,
-          exports: []
+          exports: [],
         };
         let varFileName = imp.split(new RegExp(`from`, 'i'))[0].trim();
 
         if (varFileName) {
           const origVarFileName = varFileName;
           try {
-            let instancesRegex = `\\s*\\n*\\t*\\=\\s*\\n*\\t*new\\s+${varFileName}\\s*\\n*\\t*\\(`;
-            let instances = data.split(new RegExp(instancesRegex));
+            const instancesRegex = `\\s*\\n*\\t*\\=\\s*\\n*\\t*new\\s+${varFileName}\\s*\\n*\\t*\\(`;
+            const instances = data.split(new RegExp(instancesRegex));
             if (instances.length > 1) {
               instances.pop();
               let newVarFileName = '{ ';
               instances.forEach(inst => {
-                let instance = inst.split(' ').slice(-1)[0];
-                newVarFileName += instance + ', ';
+                const instance = inst.split(' ').slice(-1)[0];
+                newVarFileName += `${instance}, `;
               });
-              newVarFileName += varFileName + ' }';
+              newVarFileName += `${varFileName} }`;
               varFileName = newVarFileName;
             }
           } catch (err) {
@@ -1974,10 +1953,10 @@ async function getImportedFiles(data, relativePath) {
               instances.pop();
               let newVarFileName = '{ ';
               instances.forEach(inst => {
-                let vars = inst.split('{').slice(-1)[0];
-                newVarFileName += vars + ', ';
+                const vars = inst.split('{').slice(-1)[0];
+                newVarFileName += `${vars}, `;
               });
-              newVarFileName += varFileName + ' }';
+              newVarFileName += `${varFileName} }`;
               varFileName = newVarFileName;
             }
 
@@ -1990,10 +1969,10 @@ async function getImportedFiles(data, relativePath) {
                 if (inst.trim().slice(-1)[0] == '}') {
                   return;
                 }
-                let varsName = inst.split(' ').slice(-1)[0];
-                newVarFileName += varsName + ', ';
+                const varsName = inst.split(' ').slice(-1)[0];
+                newVarFileName += `${varsName}, `;
               });
-              newVarFileName += varFileName + ' }';
+              newVarFileName += `${varFileName} }`;
               varFileName = newVarFileName;
               varFileName = varFileName
                 .replaceAll(' ', '')
@@ -2026,22 +2005,20 @@ async function getImportedFiles(data, relativePath) {
                 obj.exports.push({
                   varName: exp.split(' as ')[0],
                   varAlias: exp.split(' as ')[1],
-                  path: null
+                  path: null,
                 });
               } else {
                 obj.exports.push({
                   varName: exp,
                   varAlias: null,
-                  path: null
+                  path: null,
                 });
               }
             });
+        } else if (varFileName.includes(' as ')) {
+          obj.varFileName = varFileName.split(' as ')[1];
         } else {
-          if (varFileName.includes(' as ')) {
-            obj.varFileName = varFileName.split(' as ')[1];
-          } else {
-            obj.varFileName = varFileName;
-          }
+          obj.varFileName = varFileName;
         }
 
         // REFACTOR
@@ -2064,18 +2041,18 @@ async function getImportedFiles(data, relativePath) {
           .replaceAll(';', '')
           .replaceAll('\n', '');
 
-        let pathPattern = fileName.split('/').slice(0, -1).join('/');
-        let found = tsPaths.find(p => p[0] && p[0].split('/*')[0] == pathPattern);
+        const pathPattern = fileName.split('/').slice(0, -1).join('/');
+        const found = tsPaths.find(p => p[0] && p[0].split('/*')[0] == pathPattern);
 
         if (found) {
-          let refFileName = found[0].split('/*')[0];
+          const refFileName = found[0].split('/*')[0];
           if (Array.isArray(found[1])) {
             let realPath = found[1][0];
             if (realPath) {
               realPath = realPath.replaceAll('/*', '');
-              fileName = './' + fileName.replace(new RegExp('^' + refFileName), realPath);
+              fileName = `./${fileName.replace(new RegExp(`^${refFileName}`), realPath)}`;
               relativePath = relativePath.split('/');
-              let rootPath = realPath ? realPath.split('/')[0] : null;
+              const rootPath = realPath ? realPath.split('/')[0] : null;
               let rootFound = false;
 
               relativePath = relativePath.filter(path => {
@@ -2102,10 +2079,10 @@ async function getImportedFiles(data, relativePath) {
          */
         if (!fileName.includes('./')) {
           // Checking if is a project file
-          let extension = await utils.getExtension(fileName);
+          const extension = await utils.getExtension(fileName);
           if (fs.existsSync(fileName + extension)) {
             // is a absolute path
-            fileName = './' + fileName; // TODO: check for possible problems here
+            fileName = `./${fileName}`; // TODO: check for possible problems here
             relativePath = '';
           }
         }
@@ -2116,12 +2093,12 @@ async function getImportedFiles(data, relativePath) {
           if (relativePath) {
             // REFACTOR: pass to function
             if (fileName.includes('../')) {
-              let foldersToBack = fileName.split('../').length - 1;
+              const foldersToBack = fileName.split('../').length - 1;
               let RelativePathBacked = relativePath.split('/');
               RelativePathBacked = RelativePathBacked.slice(0, -1 * foldersToBack);
               RelativePathBacked = RelativePathBacked.join('/');
 
-              pathFile = RelativePathBacked + '/' + fileName.replaceAll('../', ''); //.replaceAll('//', '/')
+              pathFile = `${RelativePathBacked}/${fileName.replaceAll('../', '')}`; // .replaceAll('//', '/')
             } else {
               pathFile = relativePath + fileName.replaceAll('./', '/');
             }
@@ -2130,24 +2107,23 @@ async function getImportedFiles(data, relativePath) {
           }
 
           obj.fileName = pathFile;
-          obj.isDirectory =
-            fs.existsSync(pathFile) && fs.lstatSync(pathFile).isDirectory() ? true : false;
+          obj.isDirectory = !!(fs.existsSync(pathFile) && fs.lstatSync(pathFile).isDirectory());
 
           // Checking if reference is to file
           if (obj.isDirectory && obj.exports.length > 0) {
-            let indexExtension = await utils.getExtension(pathFile + '/index');
+            const indexExtension = await utils.getExtension(`${pathFile}/index`);
             if (indexExtension != '') {
               // index exist
-              let dataFile = await utils.getFileContent(pathFile + '/index' + indexExtension);
+              const dataFile = await utils.getFileContent(`${pathFile}/index${indexExtension}`);
               if (dataFile) {
-                let imports = await getImportedFiles(dataFile, obj.fileName);
+                const imports = await getImportedFiles(dataFile, obj.fileName);
                 for (let idx = 0; idx < obj.exports.length; ++idx) {
-                  let varName = obj.exports[idx].varName;
-                  let idxFound = imports.findIndex(
+                  const { varName } = obj.exports[idx];
+                  const idxFound = imports.findIndex(
                     e =>
                       e.varFileName &&
                       varName &&
-                      e.varFileName.toLowerCase() == varName.toLowerCase()
+                      e.varFileName.toLowerCase() == varName.toLowerCase(),
                   );
                   let exportPath = null;
                   if (idxFound == -1) {
@@ -2155,13 +2131,13 @@ async function getImportedFiles(data, relativePath) {
                       if (exportPath) {
                         return;
                       }
-                      let found =
+                      const found =
                         imp && imp.exports
                           ? imp.exports.find(
                               e =>
                                 e.varName &&
                                 varName &&
-                                e.varName.toLowerCase() == varName.toLowerCase()
+                                e.varName.toLowerCase() == varName.toLowerCase(),
                             )
                           : null;
                       if (found) {
@@ -2174,14 +2150,14 @@ async function getImportedFiles(data, relativePath) {
                     });
 
                     if (exportPath) {
-                      let extension = await utils.getExtension(exportPath);
+                      const extension = await utils.getExtension(exportPath);
                       obj.exports[idx].path = exportPath + extension;
                     }
                   }
 
                   if (idxFound > -1) {
                     const pathFile = imports[idxFound].fileName;
-                    let extension = await utils.getExtension(pathFile);
+                    const extension = await utils.getExtension(pathFile);
                     obj.exports[idx].path = pathFile + extension;
                   }
                 }
@@ -2198,11 +2174,11 @@ async function getImportedFiles(data, relativePath) {
     // Such as: const foo = required('./foo')
     if (requireds && requireds.length > 0) {
       for (let index = 0; index < requireds.length; ++index) {
-        let req = requireds[index];
-        let obj = {
+        const req = requireds[index];
+        const obj = {
           varFileName: null,
           fileName: null,
-          exports: []
+          exports: [],
         };
         let varFileName = req.split(new RegExp(`=\\s*\\t*require\\s*\\t*\\(`, 'i'))[0].trim();
 
@@ -2216,10 +2192,10 @@ async function getImportedFiles(data, relativePath) {
               instances.pop();
               let newVarFileName = '{ ';
               instances.forEach(inst => {
-                let vars = inst.split('{').slice(-1)[0];
-                newVarFileName += vars + ', ';
+                const vars = inst.split('{').slice(-1)[0];
+                newVarFileName += `${vars}, `;
               });
-              newVarFileName += varFileName + ' }';
+              newVarFileName += `${varFileName} }`;
               varFileName = newVarFileName;
             }
 
@@ -2232,10 +2208,10 @@ async function getImportedFiles(data, relativePath) {
                 if (inst.trim().slice(-1)[0] == '}') {
                   return;
                 }
-                let varsName = inst.split(' ').slice(-1)[0];
-                newVarFileName += varsName + ', ';
+                const varsName = inst.split(' ').slice(-1)[0];
+                newVarFileName += `${varsName}, `;
               });
-              newVarFileName += varFileName + ' }';
+              newVarFileName += `${varFileName} }`;
               varFileName = newVarFileName;
               varFileName = varFileName
                 .replaceAll(' ', '')
@@ -2267,13 +2243,13 @@ async function getImportedFiles(data, relativePath) {
                 obj.exports.push({
                   varName: exp.split(' as ')[0],
                   varAlias: exp.split(' as ')[1],
-                  path: null
+                  path: null,
                 });
               } else {
                 obj.exports.push({
                   varName: exp,
                   varAlias: null,
-                  path: null
+                  path: null,
                 });
               }
             });
@@ -2297,10 +2273,10 @@ async function getImportedFiles(data, relativePath) {
          */
         if (!fileName.includes('./')) {
           // Checking if is a project file
-          let extension = await utils.getExtension(fileName);
+          const extension = await utils.getExtension(fileName);
           if (fs.existsSync(fileName + extension)) {
             // is an absolute path
-            fileName = './' + fileName; // TODO: check for possible problems here
+            fileName = `./${fileName}`; // TODO: check for possible problems here
             relativePath = '';
           }
         }
@@ -2313,12 +2289,12 @@ async function getImportedFiles(data, relativePath) {
             if (relativePath) {
               // REFACTOR: pass to function
               if (fileName.includes('../')) {
-                let foldersToBack = fileName.split('../').length - 1;
+                const foldersToBack = fileName.split('../').length - 1;
                 let RelativePathBacked = relativePath.split('/');
                 RelativePathBacked = RelativePathBacked.slice(0, -1 * foldersToBack);
                 RelativePathBacked = RelativePathBacked.join('/');
 
-                pathFile = RelativePathBacked + '/' + fileName.replaceAll('../', '');
+                pathFile = `${RelativePathBacked}/${fileName.replaceAll('../', '')}`;
               } else {
                 pathFile = relativePath + fileName.replaceAll('./', '/');
               }
@@ -2327,42 +2303,40 @@ async function getImportedFiles(data, relativePath) {
             }
 
             obj.fileName = pathFile;
-            obj.isDirectory =
-              fs.existsSync(pathFile) && fs.lstatSync(pathFile).isDirectory() ? true : false;
+            obj.isDirectory = !!(fs.existsSync(pathFile) && fs.lstatSync(pathFile).isDirectory());
 
             // Checking if reference is to file
             if (obj.isDirectory) {
-              let indexExtension = await utils.getExtension(pathFile + '/index');
+              const indexExtension = await utils.getExtension(`${pathFile}/index`);
               if (indexExtension != '') {
                 // index exist
-                let dataFile = await utils.getFileContent(pathFile + '/index' + indexExtension);
+                let dataFile = await utils.getFileContent(`${pathFile}/index${indexExtension}`);
                 dataFile = await handleData.removeComments(dataFile);
-                const isRequireDirLib =
+                const isRequireDirLib = !!(
                   dataFile &&
                   dataFile.split(
                     new RegExp(
-                      '\\s*\\n*\\t*module\\s*\\n*\\t*\\.\\s*\\n*\\t*exports\\s*\\n*\\t*\\=\\s*\\n*\\t*require\\s*\\n*\\t*\\(\\s*\\n*\\t*.require\\-dir.\\s*\\n*\\t*\\)'
-                    )
+                      '\\s*\\n*\\t*module\\s*\\n*\\t*\\.\\s*\\n*\\t*exports\\s*\\n*\\t*\\=\\s*\\n*\\t*require\\s*\\n*\\t*\\(\\s*\\n*\\t*.require\\-dir.\\s*\\n*\\t*\\)',
+                    ),
                   ).length > 1
-                    ? true
-                    : false;
+                );
                 if (isRequireDirLib) {
                   // lib require-dir
                   obj.isRequireDirLib = isRequireDirLib;
                 } else {
                   // TODO: Verify other cases
 
-                  let relativePath = obj.fileName;
+                  const relativePath = obj.fileName;
                   obj.exports.map(oExp => {
                     if (
                       dataFile.split(
-                        new RegExp(`${oExp}\\s*\\n*\\t*\\=\\s*\\n*\\t*require\\s*\\n*\\t*\\(`)
+                        new RegExp(`${oExp}\\s*\\n*\\t*\\=\\s*\\n*\\t*require\\s*\\n*\\t*\\(`),
                       ).length > 1
                     ) {
                       let addPath = dataFile.split(
                         new RegExp(
-                          `${oExp}\\s*\\n*\\t*\\=\\s*\\n*\\t*require\\s*\\n*\\t*\\(\\s*\\n*\\t*`
-                        )
+                          `${oExp}\\s*\\n*\\t*\\=\\s*\\n*\\t*require\\s*\\n*\\t*\\(\\s*\\n*\\t*`,
+                        ),
                       );
                       addPath = addPath[1]
                         .split(')')[0]
@@ -2372,12 +2346,12 @@ async function getImportedFiles(data, relativePath) {
 
                       if (addPath.includes('../')) {
                         // REFACTOR: pass to funcion
-                        let foldersToBack = addPath.split('../').length - 1;
+                        const foldersToBack = addPath.split('../').length - 1;
                         let RelativePathBacked = relativePath.split('/');
                         RelativePathBacked = RelativePathBacked.slice(0, -1 * foldersToBack);
                         RelativePathBacked = RelativePathBacked.join('/');
 
-                        oExp.path = RelativePathBacked + '/' + addPath.replaceAll('../', '');
+                        oExp.path = `${RelativePathBacked}/${addPath.replaceAll('../', '')}`;
                       } else {
                         oExp.path = relativePath + addPath.replaceAll('./', '/');
                       }
@@ -2427,7 +2401,7 @@ function functionRecognizerInFile(filePath, functionName, isRecursive = true) {
         // REFACTOR: pass to function
         // adding '(' and ')' to arrow functions without '(' and ')', such as: ... async req => {
         if (cleanedData.split(new RegExp('\\s*\\n*\\t*=>\\s*\\n*\\t*').length > 1)) {
-          let params = cleanedData.trim().split(new RegExp('\\s*\\n*\\t*=>\\s*\\n*\\t*'));
+          const params = cleanedData.trim().split(new RegExp('\\s*\\n*\\t*=>\\s*\\n*\\t*'));
           for (let idx = 0; idx < params.length - 1; idx += 2) {
             let param = params[idx];
             if (param && param.slice(-1)[0] !== ')') {
@@ -2436,7 +2410,7 @@ function functionRecognizerInFile(filePath, functionName, isRecursive = true) {
               param = param.split(aux);
               param.pop();
               param = param.join(aux);
-              param += '(' + aux + ')';
+              param += `(${aux})`;
               params[idx] = param;
             }
           }
@@ -2463,8 +2437,8 @@ function functionRecognizerInFile(filePath, functionName, isRecursive = true) {
             filePath.split('/').slice(-1)[0].includes('index.')
           ) {
             let path = null;
-            let exports = cleanedData.split(
-              new RegExp(`[\\s+|\\{|\\,]${functionName}\\s*\\:\\s*require\\s*\\(`)
+            const exports = cleanedData.split(
+              new RegExp(`[\\s+|\\{|\\,]${functionName}\\s*\\:\\s*require\\s*\\(`),
             );
             if (exports.length > 1) {
               let exp = exports[1].split(new RegExp('\\,|\\}'))[0];
@@ -2483,25 +2457,22 @@ function functionRecognizerInFile(filePath, functionName, isRecursive = true) {
                 functionName = null;
               }
 
-              let relativePath = filePath.split('/').slice(0, -1).join('/');
+              const relativePath = filePath.split('/').slice(0, -1).join('/');
               // REFACTOR: Pass to function
               if (path && path.includes('./')) {
                 if (path.includes('../')) {
-                  let foldersToBack = path.split('../').length - 1;
+                  const foldersToBack = path.split('../').length - 1;
                   let RelativePathBacked = relativePath.split('/');
                   RelativePathBacked = RelativePathBacked.slice(0, -1 * foldersToBack);
                   RelativePathBacked = RelativePathBacked.join('/');
 
-                  path =
-                    RelativePathBacked +
-                    '/' +
-                    path
-                      .replaceAll("'", '')
-                      .replaceAll('"', '')
-                      .replaceAll('`', '')
-                      .replaceAll(' ', '')
-                      .replaceAll('\n', '')
-                      .replaceAll('../', '');
+                  path = `${RelativePathBacked}/${path
+                    .replaceAll("'", '')
+                    .replaceAll('"', '')
+                    .replaceAll('`', '')
+                    .replaceAll(' ', '')
+                    .replaceAll('\n', '')
+                    .replaceAll('../', '')}`;
                 } else {
                   path =
                     relativePath +
@@ -2516,7 +2487,7 @@ function functionRecognizerInFile(filePath, functionName, isRecursive = true) {
               }
 
               if (path) {
-                let extension = await utils.getExtension(path);
+                const extension = await utils.getExtension(path);
                 funcStr = await functionRecognizerInFile(path + extension, functionName, false);
               }
             }
@@ -2524,74 +2495,67 @@ function functionRecognizerInFile(filePath, functionName, isRecursive = true) {
           /* END CASE */
 
           return resolve(funcStr);
-        } else {
-          // When file has only one exported function
-          cleanedData = cleanedData
-            .replaceAll('\n', ' ')
-            .replaceAll('  ', ' ')
-            .replaceAll('  ', ' ');
-          if (
-            cleanedData.split(new RegExp('export\\s*\\t*default\\s*\\t*\\=*\\s*\\t*\\(.+\\).+\\{'))
-              .length > 1
-          ) {
-            let directPattern = cleanedData.split(
-              new RegExp('export\\s*\\t*default\\s*\\t*\\=*\\s*\\t*\\(.+\\).+\\{')
-            );
-            if (directPattern.length > 1) directPattern = true;
-            else directPattern = false;
-
-            if (directPattern) {
-              // Direct declaration in module.exports
-              let funcStr = await handleData.functionRecognizerInData(
-                cleanedData,
-                `export\\s*default`
-              );
-              return resolve(funcStr);
-            } else {
-              // Indirect declaration in module.exports
-              let funcName = cleanedData.split(new RegExp('export\\s*\\n*\\t*default\\s*\\n*\\t*'));
-              if (funcName[1]) {
-                funcName = funcName[1].split(/\n|\s|\t|;|\{|\}|\(|\)|\[|\]/);
-              } else {
-                return resolve(null); // TODO: Verify 'null' case
-              }
-              let funcStr = await handleData.functionRecognizerInData(cleanedData, funcName[0]);
-              return resolve(funcStr);
-            }
-          } else {
-            let directPattern = cleanedData.split(
-              new RegExp(
-                `module\\s*\\n*\\t*\\.\\s*\\n*\\t*exports\\s*\\n*\\t*\\=*\\s*\\n*\\t*\\(.+\\).+\\{`
-              )
-            );
-            if (directPattern.length > 1) {
-              directPattern = true;
-            } else {
-              directPattern = false;
-            }
-
-            if (directPattern) {
-              // Direct declaration in module.exports
-              let funcStr = await handleData.functionRecognizerInData(
-                cleanedData,
-                `module\\.exports`
-              );
-              return resolve(funcStr);
-            } else {
-              // Indirect declaration in module.exports
-              let funcName = cleanedData.split(
-                new RegExp('module\\s*\\n*\\t*\\.\\s*\\n*\\t*exports\\s*\\n*\\t*\\=\\s*\\n*\\t*')
-              );
-              if (funcName[1]) {
-                funcName = funcName[1].split(/\n|\s|\t|;|\{|\}|\(|\)|\[|\]/);
-              } else {
-                return resolve(null); // TODO: Verify 'null' case
-              }
-              let funcStr = await handleData.functionRecognizerInData(cleanedData, funcName[0]);
-              return resolve(funcStr);
-            }
-          }
         }
+        // When file has only one exported function
+        cleanedData = cleanedData.replaceAll('\n', ' ').replaceAll('  ', ' ').replaceAll('  ', ' ');
+        if (
+          cleanedData.split(new RegExp('export\\s*\\t*default\\s*\\t*\\=*\\s*\\t*\\(.+\\).+\\{'))
+            .length > 1
+        ) {
+          let directPattern = cleanedData.split(
+            new RegExp('export\\s*\\t*default\\s*\\t*\\=*\\s*\\t*\\(.+\\).+\\{'),
+          );
+          if (directPattern.length > 1) directPattern = true;
+          else directPattern = false;
+
+          if (directPattern) {
+            // Direct declaration in module.exports
+            const funcStr = await handleData.functionRecognizerInData(
+              cleanedData,
+              `export\\s*default`,
+            );
+            return resolve(funcStr);
+          }
+          // Indirect declaration in module.exports
+          let funcName = cleanedData.split(new RegExp('export\\s*\\n*\\t*default\\s*\\n*\\t*'));
+          if (funcName[1]) {
+            funcName = funcName[1].split(/\n|\s|\t|;|\{|\}|\(|\)|\[|\]/);
+          } else {
+            return resolve(null); // TODO: Verify 'null' case
+          }
+          const funcStr = await handleData.functionRecognizerInData(cleanedData, funcName[0]);
+          return resolve(funcStr);
+        }
+        let directPattern = cleanedData.split(
+          new RegExp(
+            `module\\s*\\n*\\t*\\.\\s*\\n*\\t*exports\\s*\\n*\\t*\\=*\\s*\\n*\\t*\\(.+\\).+\\{`,
+          ),
+        );
+        if (directPattern.length > 1) {
+          directPattern = true;
+        } else {
+          directPattern = false;
+        }
+
+        if (directPattern) {
+          // Direct declaration in module.exports
+          const funcStr = await handleData.functionRecognizerInData(
+            cleanedData,
+            `module\\.exports`,
+          );
+          return resolve(funcStr);
+        }
+        // Indirect declaration in module.exports
+        let funcName = cleanedData.split(
+          new RegExp('module\\s*\\n*\\t*\\.\\s*\\n*\\t*exports\\s*\\n*\\t*\\=\\s*\\n*\\t*'),
+        );
+        if (funcName[1]) {
+          funcName = funcName[1].split(/\n|\s|\t|;|\{|\}|\(|\)|\[|\]/);
+        } else {
+          return resolve(null); // TODO: Verify 'null' case
+        }
+        const funcStr = await handleData.functionRecognizerInData(cleanedData, funcName[0]);
+        return resolve(funcStr);
       } catch (err) {
         return resolve(null);
       }
@@ -2600,5 +2564,5 @@ function functionRecognizerInFile(filePath, functionName, isRecursive = true) {
 }
 
 module.exports = {
-  readEndpointFile
+  readEndpointFile,
 };

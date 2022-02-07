@@ -4,23 +4,23 @@ const modelSchema = new Schema(
   {
     name: {
       type: String,
-      require: true
+      require: true,
     },
     email: {
       type: String,
-      require: true
+      require: true,
     },
 
     password: {
       type: String,
-      require: true
-    }
+      require: true,
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-modelSchema.methods.toJSON = function () {
-  var obj = this.toObject();
+modelSchema.methods.toJSON = function deletePassword() {
+  const obj = this.toObject();
   delete obj.password;
   return obj;
 };

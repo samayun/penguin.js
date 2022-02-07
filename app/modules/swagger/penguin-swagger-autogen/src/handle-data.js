@@ -12,17 +12,17 @@ function dataConverter(data) {
   return new Promise(resolve => {
     const origData = data;
     try {
-      let patterns = new Set();
+      const patterns = new Set();
       // CASE: Converting require("./foo")(app) to app.use(require("./foo"))
       if (!data) {
         return resolve({
           data,
-          patterns: []
+          patterns: [],
         });
       }
 
-      let founds = data.split(
-        new RegExp('(require\\s*\\n*\\t*\\(.*\\)\\s*\\n*\\t*\\(\\s*\\n*\\t*.*\\s*\\n*\\t*\\))')
+      const founds = data.split(
+        new RegExp('(require\\s*\\n*\\t*\\(.*\\)\\s*\\n*\\t*\\(\\s*\\n*\\t*.*\\s*\\n*\\t*\\))'),
       );
       for (let idx = 0; idx < founds.length; ++idx) {
         let req = founds[idx];
@@ -42,17 +42,17 @@ function dataConverter(data) {
         req[2] = req[2].split(',')[0]; // TODO: verify which possition in req[2][0] is a route
         patterns.add(req[2]);
 
-        let converted = `${req[2]}.use(require(${req[1]}))`;
+        const converted = `${req[2]}.use(require(${req[1]}))`;
         data = data.replace(founds[idx], converted); // TODO: use replaceAll() ?
       }
       return resolve({
         data,
-        patterns: [...patterns]
+        patterns: [...patterns],
       });
     } catch (err) {
       return resolve({
         data: origData,
-        patterns: []
+        patterns: [],
       });
     }
   });
@@ -77,7 +77,7 @@ function clearData(data) {
           .split(new RegExp('\\s*\\n*\\t*\\.\\s*\\n*\\t*headers\\s*\\n*\\t*\\[\\s*\\n*\\t*'))
           .join('.headers[');
         data = data.split(
-          new RegExp('\\s*\\n*\\t*\\.\\s*\\n*\\t*header\\s*\\n*\\t*\\(\\s*\\n*\\t*')
+          new RegExp('\\s*\\n*\\t*\\.\\s*\\n*\\t*header\\s*\\n*\\t*\\(\\s*\\n*\\t*'),
         );
         if (data.length > 1) {
           for (let idxHeader = 1; idxHeader < data.length; ++idxHeader) {
@@ -95,10 +95,10 @@ function clearData(data) {
           for (let idxHeaders = 1; idxHeaders < data.length; ++idxHeaders) {
             let d = data[idxHeaders];
             if (d[0] === "'" || d[0] === '"' || d[0] === '`') {
-              let str = popString(d);
+              const str = popString(d);
               d = d.replace(
                 new RegExp(`.${str}.`),
-                `${statics.STRING_QUOTE}${str}${statics.STRING_QUOTE}`
+                `${statics.STRING_QUOTE}${str}${statics.STRING_QUOTE}`,
               );
               data[idxHeaders] = d;
             }
@@ -115,7 +115,7 @@ function clearData(data) {
       data = data.replaceAll('*//*', '*/\n/*');
       data = data.replaceAll('*///', '*/\n//');
       data = data.replaceAll('///', '//');
-      data = data.replaceAll('://', ':/' + statics.STRING_BREAKER + '/'); // REFACTOR: improve this. Avoiding cases such as: ... http://... be handled as a comment
+      data = data.replaceAll('://', `:/${statics.STRING_BREAKER}/`); // REFACTOR: improve this. Avoiding cases such as: ... http://... be handled as a comment
 
       data = data.split('//').map((e, idx) => {
         if (idx != 0) {
@@ -124,7 +124,7 @@ function clearData(data) {
         return e;
       });
       data = data.join('//').replaceAll('//', '/*');
-      data = data.replaceAll(':/' + statics.STRING_BREAKER + '/', '://');
+      data = data.replaceAll(`:/${statics.STRING_BREAKER}/`, '://');
 
       let aData = data.replaceAll('\n', statics.STRING_BREAKER);
       aData = aData.replaceAll('\t', ' ');
@@ -180,7 +180,7 @@ function removeComments(data, keepSwaggerTags = false) {
     let isStr3 = 0; // `
     try {
       for (let idx = 0; idx < data.length; ++idx) {
-        let c = data[idx];
+        const c = data[idx];
 
         if (stackComment1 == 0 && stackComment2 == 0) {
           // Type '
@@ -326,7 +326,7 @@ function getSwaggerComments(data) {
 
     try {
       for (let idx = 0; idx < data.length; ++idx) {
-        let c = data[idx];
+        const c = data[idx];
 
         if (stackComment1 == 0 && stackComment2 == 0) {
           // Type '
@@ -399,7 +399,7 @@ function getSwaggerComments(data) {
         if (stackComment1 == 2) {
           stackComment1 = 0;
           if (buffer1.includes('#swagger.')) {
-            strToReturn += ' ' + buffer1; // keeping the comment that has a swagger tag
+            strToReturn += ` ${buffer1}`; // keeping the comment that has a swagger tag
             buffer1 = '';
           } else {
             buffer1 = '';
@@ -409,7 +409,7 @@ function getSwaggerComments(data) {
         if (stackComment2 == 2) {
           stackComment2 = 0;
           if (buffer2.includes('#swagger.')) {
-            strToReturn += ' ' + buffer2; // keeping the comment that has a swagger tag
+            strToReturn += ` ${buffer2}`; // keeping the comment that has a swagger tag
             buffer2 = '';
           } else {
             buffer2 = '';
@@ -452,7 +452,7 @@ function removeStrings(data) {
 
     try {
       for (let idx = 0; idx < data.length; ++idx) {
-        let c = data[idx];
+        const c = data[idx];
 
         // Type '
         if (
@@ -543,7 +543,7 @@ function removeInsideParentheses(data, keepParentheses = false, level = 0) {
 
     try {
       for (let idx = 0; idx < data.length; ++idx) {
-        let c = data[idx];
+        const c = data[idx];
 
         if (c == '(') {
           stack += 1;
@@ -618,21 +618,21 @@ function addReferenceToMethods(data, patterns) {
     }
 
     let auxData = data;
-    let routeEndpoints = [];
+    const routeEndpoints = [];
 
     const origData = data;
     try {
       // CASE: router.route('/user').get(authorize, (req, res) => {
-      let aDataRoute = auxData.split(
-        new RegExp(`.*\\s*\\n*\\t*\\.\\s*\\n*\\t*route\\s*\\n*\\t*\\(`)
+      const aDataRoute = auxData.split(
+        new RegExp(`.*\\s*\\n*\\t*\\.\\s*\\n*\\t*route\\s*\\n*\\t*\\(`),
       );
       if (aDataRoute.length > 1) {
         for (let idx = 1; idx < aDataRoute.length; ++idx) {
           // CASE: app.get([_[get]_])('/automatic1/users/:id', (req, res) => {
           for (let mIdx = 0; mIdx < statics.METHODS.length; ++mIdx) {
-            let method = statics.METHODS[mIdx];
-            let line = aDataRoute[idx].split(
-              new RegExp(`\\)(\\s*|\\n*|\\t*)\\.\\s*\\n*\\t*${method}\\s*\\n*\\t*\\(`)
+            const method = statics.METHODS[mIdx];
+            const line = aDataRoute[idx].split(
+              new RegExp(`\\)(\\s*|\\n*|\\t*)\\.\\s*\\n*\\t*${method}\\s*\\n*\\t*\\(`),
             );
             if (line.length === 3) {
               line[0] = line[0].split(')')[0];
@@ -645,12 +645,10 @@ function addReferenceToMethods(data, patterns) {
                     `\\)(\\s*|\\n*|\\t*)\\.\\s*\\n*\\t*put\\s*\\n*\\t*\\(|` +
                     `\\)(\\s*|\\n*|\\t*)\\.\\s*\\n*\\t*delete\\s*\\n*\\t*\\(|` +
                     `\\)(\\s*|\\n*|\\t*)\\.\\s*\\n*\\t*patch\\s*\\n*\\t*\\(|` +
-                    `\\)(\\s*|\\n*|\\t*)\\.\\s*\\n*\\t*options\\s*\\n*\\t*\\(`
-                )
+                    `\\)(\\s*|\\n*|\\t*)\\.\\s*\\n*\\t*options\\s*\\n*\\t*\\(`,
+                ),
               )[0];
-              routeEndpoints.push(
-                (patterns[0] || '_app') + `.${method}(` + line[0] + ',' + line[2]
-              );
+              routeEndpoints.push(`${patterns[0] || '_app'}.${method}(${line[0]},${line[2]}`);
             }
           }
         }
@@ -676,12 +674,12 @@ function addReferenceToMethods(data, patterns) {
       auxData = auxData.join('');
       // END CASE
 
-      let methods = [...statics.METHODS, 'use', 'all'];
+      const methods = [...statics.METHODS, 'use', 'all'];
       for (let idx = 0; idx < methods.length; ++idx) {
         for (let idxPtn = 0; idxPtn < patterns.length; ++idxPtn) {
-          let method = methods[idx];
-          let pattern = patterns[idxPtn];
-          let regexMethods = `${pattern}\\s*\\n*\\t*\\.\\s*\\n*\\t*${method}\\s*\\n*\\t*\\(`;
+          const method = methods[idx];
+          const pattern = patterns[idxPtn];
+          const regexMethods = `${pattern}\\s*\\n*\\t*\\.\\s*\\n*\\t*${method}\\s*\\n*\\t*\\(`;
           auxData = auxData.split(new RegExp(regexMethods));
 
           /**
@@ -689,18 +687,18 @@ function addReferenceToMethods(data, patterns) {
            */
           if (auxData && auxData.length > 1 && method == 'use') {
             for (let idxData = 1; idxData < auxData.length; ++idxData) {
-              let chainedUse = auxData[idxData].split(
-                new RegExp(`\\)\\s*\\n*\\t*\\.\\s*\\n*\\t*use\\s*\\n*\\t*\\(`)
+              const chainedUse = auxData[idxData].split(
+                new RegExp(`\\)\\s*\\n*\\t*\\.\\s*\\n*\\t*use\\s*\\n*\\t*\\(`),
               );
               if (chainedUse.length > 1) {
                 auxData[idxData] = chainedUse.join(
-                  `) ${pattern}` + `.use([_[use]_])([_[${pattern}]_])(`
+                  `) ${pattern}` + `.use([_[use]_])([_[${pattern}]_])(`,
                 );
               }
             }
           }
           auxData = auxData.join(
-            (pattern || '_app') + `.${method}([_[${method}]_])([_[${pattern}]_])(`
+            `${pattern || '_app'}.${method}([_[${method}]_])([_[${pattern}]_])(`,
           );
         }
 
@@ -709,7 +707,7 @@ function addReferenceToMethods(data, patterns) {
           auxData = auxData.split(']_])([_[');
           let bytePosition = auxData[0].split('([_[')[0].length;
           for (let idxPtn = 1; idxPtn < auxData.length; ++idxPtn) {
-            let auxBytePosition = auxData[idxPtn].split(']_])(')[1].split('([_[')[0].length;
+            const auxBytePosition = auxData[idxPtn].split(']_])(')[1].split('([_[')[0].length;
             auxData[idxPtn] = auxData[idxPtn].replace(']_])(', `]_])([_[${bytePosition}]_])(`);
             bytePosition += auxBytePosition;
           }
@@ -734,20 +732,20 @@ function getQueryIndirectly(elem, request, objParameters) {
   const origObjParameters = objParameters;
   try {
     for (let idx = 0; idx < request.length; ++idx) {
-      let req = request[idx];
+      const req = request[idx];
       if (
         req &&
         req.split(new RegExp('\\;|\\{|\\(|\\[|\\"|\\\'|\\`|\\}|\\)|\\]|\\:|\\,|\\*|\\!|\\|'))
           .length == 1 &&
         elem &&
         elem.split(
-          new RegExp(' .*?\\s*\\t*=\\s*\\t*' + req + '\\.\\s*\\t*query(\\s|\\n|;|\\t)', 'gmi')
-            .length > 1
+          new RegExp(` .*?\\s*\\t*=\\s*\\t*${req}\\.\\s*\\t*query(\\s|\\n|;|\\t)`, 'gmi').length >
+            1,
         )
       ) {
-        let queryVars = [];
+        const queryVars = [];
         let aQuerys = elem.split(
-          new RegExp('\\s*\\t*=\\s*\\t*' + req + '\\.\\s*\\t*query(\\s|\\n|;|\\t)', 'i')
+          new RegExp(`\\s*\\t*=\\s*\\t*${req}\\.\\s*\\t*query(\\s|\\n|;|\\t)`, 'i'),
         );
         aQuerys = aQuerys.slice(0, -1);
 
@@ -763,15 +761,15 @@ function getQueryIndirectly(elem, request, objParameters) {
               if (
                 query &&
                 query.split(
-                  new RegExp('\\;|\\{|\\(|\\[|\\"|\\\'|\\`|\\}|\\)|\\]|\\:|\\,|\\*|\\!|\\|')
+                  new RegExp('\\;|\\{|\\(|\\[|\\"|\\\'|\\`|\\}|\\)|\\]|\\:|\\,|\\*|\\!|\\|'),
                 ).length == 1
               ) {
-                let varNames = elem.split(new RegExp(' ' + query + '\\.')).splice(1);
+                let varNames = elem.split(new RegExp(` ${query}\\.`)).splice(1);
                 varNames = varNames.map(v => (v = v.split(new RegExp('\\s|;|\\n|\\t'))[0]));
                 varNames.forEach(name => {
                   objParameters[name] = {
                     name,
-                    in: 'query'
+                    in: 'query',
                   };
                 });
               }
@@ -796,7 +794,7 @@ function getStatus(elem, response, objResponses) {
   const origObjResponses = objResponses;
   try {
     for (let idx = 0; idx < response.length; ++idx) {
-      let res = response[idx];
+      const res = response[idx];
       if (
         res &&
         elem &&
@@ -804,22 +802,16 @@ function getStatus(elem, response, objResponses) {
           .replaceAll(' ', '')
           .split(
             new RegExp(
-              res +
-                '\\s*\\n*\\t*\\.\\s*\\n*\\t*status\\s*\\(|' +
-                res +
-                '\\s*\\n*\\t*\\.\\s*\\n*\\t*sendStatus\\s*\\('
-            )
+              `${res}\\s*\\n*\\t*\\.\\s*\\n*\\t*status\\s*\\(|${res}\\s*\\n*\\t*\\.\\s*\\n*\\t*sendStatus\\s*\\(`,
+            ),
           ).length > 1
       ) {
         elem
           .replaceAll(' ', '')
           .split(
             new RegExp(
-              res +
-                '\\s*\\n*\\t*\\.\\s*\\n*\\t*status\\s*\\(|' +
-                res +
-                '\\s*\\n*\\t*\\.\\s*\\n*\\t*sendStatus\\s*\\('
-            )
+              `${res}\\s*\\n*\\t*\\.\\s*\\n*\\t*status\\s*\\(|${res}\\s*\\n*\\t*\\.\\s*\\n*\\t*sendStatus\\s*\\(`,
+            ),
           )
           .splice(1)
           .forEach(async s => {
@@ -835,33 +827,33 @@ function getStatus(elem, response, objResponses) {
                * CASE: Handle status function (Express.js) with variables or multiple status code
                * Issue: #62
                */
-              let auxStatus = status.split(new RegExp('\\?|\\|\\||\\:'));
+              const auxStatus = status.split(new RegExp('\\?|\\|\\||\\:'));
               auxStatus.forEach(sts => {
                 if (utils.isNumeric(sts) && !!objResponses[sts] === false) {
                   objResponses[sts] = {
                     description:
-                      tables.getHttpStatusDescription(sts, swaggerTags.getLanguage()) || ''
+                      tables.getHttpStatusDescription(sts, swaggerTags.getLanguage()) || '',
                   };
                 } else if (utils.isNumeric(sts) && !!objResponses[sts] === true) {
                   // concatenated with existing information
                   objResponses[sts] = {
                     description:
                       tables.getHttpStatusDescription(sts, swaggerTags.getLanguage()) || '',
-                    ...objResponses[sts]
+                    ...objResponses[sts],
                   };
                 }
               });
             } else if (utils.isNumeric(status) && !!objResponses[status] === false) {
               objResponses[status] = {
                 description:
-                  tables.getHttpStatusDescription(status, swaggerTags.getLanguage()) || ''
+                  tables.getHttpStatusDescription(status, swaggerTags.getLanguage()) || '',
               };
             } else if (utils.isNumeric(status) && !!objResponses[status] === true) {
               // concatenated with existing information
               objResponses[status] = {
                 description:
                   tables.getHttpStatusDescription(status, swaggerTags.getLanguage()) || '',
-                ...objResponses[status]
+                ...objResponses[status],
               };
             }
           });
@@ -877,24 +869,19 @@ function getStatus(elem, response, objResponses) {
           .replaceAll(' ', '')
           .split(
             new RegExp(
-              res +
-                '\\s*\\n*\\t*\\.\\s*\\n*\\t*send\\s*\\(|' +
-                res +
-                '\\s*\\n*\\t*\\.\\s*\\n*\\t*json\\s*\\(|' +
-                res +
-                '\\s*\\n*\\t*\\.\\s*\\n*\\t*sendFile\\s*\\('
-            )
+              `${res}\\s*\\n*\\t*\\.\\s*\\n*\\t*send\\s*\\(|${res}\\s*\\n*\\t*\\.\\s*\\n*\\t*json\\s*\\(|${res}\\s*\\n*\\t*\\.\\s*\\n*\\t*sendFile\\s*\\(`,
+            ),
           ).length > 1
       ) {
         if (!!objResponses[200] === false) {
           objResponses[200] = {
-            description: tables.getHttpStatusDescription(200, swaggerTags.getLanguage())
+            description: tables.getHttpStatusDescription(200, swaggerTags.getLanguage()),
           };
         } else if (!!objResponses[200] === true) {
           // concatenated with existing information
           objResponses[200] = {
             description: tables.getHttpStatusDescription(200, swaggerTags.getLanguage()),
-            ...objResponses[200]
+            ...objResponses[200],
           };
         }
       }
@@ -917,12 +904,12 @@ function getHeader(elem, path, method, response, objEndpoint) {
   const origObjEndpoint = objEndpoint;
   try {
     for (let idx = 0; idx < response.length; ++idx) {
-      let res = response[idx];
-      if (res && elem && elem.replaceAll(' ', '').includes(res + '.setHeader(')) {
+      const res = response[idx];
+      if (res && elem && elem.replaceAll(' ', '').includes(`${res}.setHeader(`)) {
         elem = elem.replaceAll(' ', '');
-        let aContentType = new Set(); // To avoid repetition
+        const aContentType = new Set(); // To avoid repetition
         elem
-          .split(res + '.setHeader(')
+          .split(`${res}.setHeader(`)
           .splice(1)
           .forEach(s => {
             if (
@@ -974,7 +961,7 @@ function getHeaderQueryBody(elem, request, objParameters) {
 
   try {
     for (let idx = 0; idx < request.length; ++idx) {
-      let req = request[idx];
+      const req = request[idx];
 
       if (
         req &&
@@ -986,9 +973,9 @@ function getHeaderQueryBody(elem, request, objParameters) {
       /**
        * Headers
        */
-      if (req && elem && elem.split(req + '.headers.').length > 1) {
+      if (req && elem && elem.split(`${req}.headers.`).length > 1) {
         elem
-          .split(req + '.headers.')
+          .split(`${req}.headers.`)
           .splice(1)
           .forEach(p => {
             p = p.trim();
@@ -1015,7 +1002,7 @@ function getHeaderQueryBody(elem, request, objParameters) {
                 // Checks if the parameter name already exists
                 objParameters[name] = {
                   name,
-                  in: 'header'
+                  in: 'header',
                 };
               }
               if (!objParameters[name].in) {
@@ -1040,14 +1027,14 @@ function getHeaderQueryBody(elem, request, objParameters) {
       if (
         req &&
         elem &&
-        elem.split(new RegExp('\\}\\s*\\n*\\t*\\=\\s*\\n*\\t*' + req + '.headers\\s+')).length > 1
+        elem.split(new RegExp(`\\}\\s*\\n*\\t*\\=\\s*\\n*\\t*${req}.headers\\s+`)).length > 1
       ) {
-        let elems = elem.split(new RegExp('\\}\\s*\\n*\\t*\\=\\s*\\n*\\t*' + req + '.headers\\s+'));
+        const elems = elem.split(new RegExp(`\\}\\s*\\n*\\t*\\=\\s*\\n*\\t*${req}.headers\\s+`));
         for (let idxHeader = 0; idxHeader < elems.length - 1; ++idxHeader) {
-          let header = elems[idxHeader]; //objBody
+          let header = elems[idxHeader]; // objBody
 
           if (header.split(new RegExp('\\:\\s*\\n*\\t*\\{')).length > 1) {
-            let subObjs = header.split(new RegExp('\\:\\s*\\n*\\t*\\{'));
+            const subObjs = header.split(new RegExp('\\:\\s*\\n*\\t*\\{'));
             for (let idxObj = 1; idxObj < subObjs.length; ++idxObj) {
               subObjs[idxObj] = subObjs[idxObj].split('}')[1];
             }
@@ -1080,7 +1067,7 @@ function getHeaderQueryBody(elem, request, objParameters) {
                 // Checks if the parameter name already exists
                 objParameters[name] = {
                   name,
-                  in: 'header'
+                  in: 'header',
                 };
               }
               if (!objParameters[name].in) {
@@ -1103,10 +1090,10 @@ function getHeaderQueryBody(elem, request, objParameters) {
        * Headers
        * E.g: let someHeader = req.headers['x-token']
        */
-      if (req && elem && elem.split(req + '.headers[').length > 1) {
-        let elems = elem.split(req + '.headers[');
+      if (req && elem && elem.split(`${req}.headers[`).length > 1) {
+        const elems = elem.split(`${req}.headers[`);
         for (let idxHeader = 1; idxHeader < elems.length; ++idxHeader) {
-          let header = elems[idxHeader];
+          const header = elems[idxHeader];
           if (header.split(statics.STRING_QUOTE).length > 2) {
             let name = header.split(statics.STRING_QUOTE)[1];
             name = name.trim();
@@ -1132,7 +1119,7 @@ function getHeaderQueryBody(elem, request, objParameters) {
                 // Checks if the parameter name already exists
                 objParameters[name] = {
                   name,
-                  in: 'header'
+                  in: 'header',
                 };
               }
               if (!objParameters[name].in) {
@@ -1154,9 +1141,9 @@ function getHeaderQueryBody(elem, request, objParameters) {
       /**
        * query
        */
-      if (req && elem && elem.split(req + '.query.').length > 1) {
+      if (req && elem && elem.split(`${req}.query.`).length > 1) {
         elem
-          .split(req + '.query.')
+          .split(`${req}.query.`)
           .splice(1)
           .forEach(p => {
             p = p.trim();
@@ -1183,7 +1170,7 @@ function getHeaderQueryBody(elem, request, objParameters) {
                 // Checks if the parameter name already exists
                 objParameters[name] = {
                   name,
-                  in: 'query'
+                  in: 'query',
                 };
               }
               if (!objParameters[name].in) {
@@ -1210,11 +1197,11 @@ function getHeaderQueryBody(elem, request, objParameters) {
       if (
         req &&
         elem &&
-        elem.split(new RegExp('\\}\\s*\\n*\\t*\\=\\s*\\n*\\t*' + req + '.query\\s+')).length > 1
+        elem.split(new RegExp(`\\}\\s*\\n*\\t*\\=\\s*\\n*\\t*${req}.query\\s+`)).length > 1
       ) {
-        let elems = elem.split(new RegExp('\\}\\s*\\n*\\t*\\=\\s*\\n*\\t*' + req + '.query\\s+'));
+        const elems = elem.split(new RegExp(`\\}\\s*\\n*\\t*\\=\\s*\\n*\\t*${req}.query\\s+`));
         for (let idxQuery = 0; idxQuery < elems.length - 1; ++idxQuery) {
-          let query = elems[idxQuery]; //objBody
+          let query = elems[idxQuery]; // objBody
 
           /**
            * CASE: const { item1, item2: { subItem1, subItem2 } } = req.query;
@@ -1222,7 +1209,7 @@ function getHeaderQueryBody(elem, request, objParameters) {
            * TODO: In the furute, handle sub-items
            */
           if (query.split(new RegExp('\\:\\s*\\n*\\t*\\{')).length > 1) {
-            let subObjs = query.split(new RegExp('\\:\\s*\\n*\\t*\\{'));
+            const subObjs = query.split(new RegExp('\\:\\s*\\n*\\t*\\{'));
             for (let idxObj = 1; idxObj < subObjs.length; ++idxObj) {
               subObjs[idxObj] = subObjs[idxObj].split('}')[1];
             }
@@ -1256,7 +1243,7 @@ function getHeaderQueryBody(elem, request, objParameters) {
                 // Checks if the parameter name already exists
                 objParameters[name] = {
                   name,
-                  in: 'query'
+                  in: 'query',
                 };
               }
               if (!objParameters[name].in) {
@@ -1281,9 +1268,9 @@ function getHeaderQueryBody(elem, request, objParameters) {
        * Created by: WHL
        * Modified by: Davi Baltar
        */
-      if (req && elem && elem.split(req + '.body.').length > 1) {
+      if (req && elem && elem.split(`${req}.body.`).length > 1) {
         elem
-          .split(req + '.body.')
+          .split(`${req}.body.`)
           .splice(1)
           .forEach(p => {
             p = p.trim();
@@ -1297,20 +1284,20 @@ function getHeaderQueryBody(elem, request, objParameters) {
 
             name = name.replaceAll('...', '');
 
-            if (!!objParameters['__obj__in__body__'] === false) {
-              objParameters['__obj__in__body__'] = {
+            if (!!objParameters.__obj__in__body__ === false) {
+              objParameters.__obj__in__body__ = {
                 name: '__obj__in__body__',
                 in: 'body',
                 schema: {
                   type: 'object',
-                  properties: {}
-                }
+                  properties: {},
+                },
               };
             }
-            if (!!objParameters['__obj__in__body__'] === true) {
+            if (!!objParameters.__obj__in__body__ === true) {
               // Checks if the parameter name already exists
-              objParameters['__obj__in__body__'].schema.properties[name] = {
-                example: 'any'
+              objParameters.__obj__in__body__.schema.properties[name] = {
+                example: 'any',
               };
             }
           });
@@ -1325,9 +1312,9 @@ function getHeaderQueryBody(elem, request, objParameters) {
       if (
         req &&
         elem &&
-        elem.split(new RegExp('\\}\\s*\\n*\\t*\\=\\s*\\n*\\t*' + req + '.body\\s+')).length > 1
+        elem.split(new RegExp(`\\}\\s*\\n*\\t*\\=\\s*\\n*\\t*${req}.body\\s+`)).length > 1
       ) {
-        let elems = elem.split(new RegExp('\\}\\s*\\n*\\t*\\=\\s*\\n*\\t*' + req + '.body\\s+'));
+        const elems = elem.split(new RegExp(`\\}\\s*\\n*\\t*\\=\\s*\\n*\\t*${req}.body\\s+`));
         for (let idxBody = 0; idxBody < elems.length - 1; ++idxBody) {
           let objBody = elems[idxBody];
 
@@ -1337,7 +1324,7 @@ function getHeaderQueryBody(elem, request, objParameters) {
            * TODO: In the future, handle sub-items
            */
           if (objBody.split(new RegExp('\\:\\s*\\n*\\t*\\{')).length > 1) {
-            let subObjs = objBody.split(new RegExp('\\:\\s*\\n*\\t*\\{'));
+            const subObjs = objBody.split(new RegExp('\\:\\s*\\n*\\t*\\{'));
             for (let idxObj = 1; idxObj < subObjs.length; ++idxObj) {
               subObjs[idxObj] = subObjs[idxObj].split('}')[1];
             }
@@ -1358,20 +1345,20 @@ function getHeaderQueryBody(elem, request, objParameters) {
               return;
             }
 
-            if (!!objParameters['__obj__in__body__'] === false) {
-              objParameters['__obj__in__body__'] = {
+            if (!!objParameters.__obj__in__body__ === false) {
+              objParameters.__obj__in__body__ = {
                 name: '__obj__in__body__',
                 in: 'body',
                 schema: {
                   type: 'object',
-                  properties: {}
-                }
+                  properties: {},
+                },
               };
             }
-            if (!!objParameters['__obj__in__body__'] === true) {
+            if (!!objParameters.__obj__in__body__ === true) {
               // Checks if the parameter name already exists
-              objParameters['__obj__in__body__'].schema.properties[name] = {
-                example: 'any'
+              objParameters.__obj__in__body__.schema.properties[name] = {
+                example: 'any',
               };
             }
           });
@@ -1393,17 +1380,17 @@ async function getCallbackParameters(data) {
     return {
       req: [],
       res: [],
-      next: []
+      next: [],
     };
   }
-  let req = new Set();
-  let res = new Set();
-  let next = new Set();
+  const req = new Set();
+  const res = new Set();
+  const next = new Set();
 
   const regex = '\\=|\\{|\\}|\\(|\\)|\\[|\\]|\\!|\\,';
 
   try {
-    let splitedParams = data.split(new RegExp('(\\(|\\))'));
+    const splitedParams = data.split(new RegExp('(\\(|\\))'));
     for (let idx = 0; idx < splitedParams.length; ++idx) {
       let pos = splitedParams[idx + 2] || '';
 
@@ -1416,7 +1403,7 @@ async function getCallbackParameters(data) {
         pos = await removeStrings(pos);
       }
 
-      let arrowFunctionPos = pos.split(new RegExp(`(\\s*\\t*=>\\s*\\n*\\t*\\{)`));
+      const arrowFunctionPos = pos.split(new RegExp(`(\\s*\\t*=>\\s*\\n*\\t*\\{)`));
       let arrowFunctionWithoutCurlyBracketPos = [''];
       let traditionalFunctionPos = [''];
 
@@ -1425,8 +1412,8 @@ async function getCallbackParameters(data) {
         if (arrowFunctionWithoutCurlyBracketPos.length == 1)
           traditionalFunctionPos = pos.split(
             new RegExp(
-              `(\\s*\\n*\\t*\\:?\\s*\\n*\\t*\\w*\\s*\\n*\\t*\\<?\\s*\\n*\\t*\\w*\\s*\\n*\\t*\\>?\\s*\\n*\\t*\\{)`
-            )
+              `(\\s*\\n*\\t*\\:?\\s*\\n*\\t*\\w*\\s*\\n*\\t*\\<?\\s*\\n*\\t*\\w*\\s*\\n*\\t*\\>?\\s*\\n*\\t*\\{)`,
+            ),
           );
       }
 
@@ -1453,8 +1440,8 @@ async function getCallbackParameters(data) {
         // Request
         if (params[0] && params[0].includes(':')) {
           // TS
-          let typeParam = params[0].split(':')[1].toLocaleLowerCase();
-          let param = params[0]
+          const typeParam = params[0].split(':')[1].toLocaleLowerCase();
+          const param = params[0]
             .split(':')[0]
             .replaceAll('\n', '')
             .replaceAll('\t', '')
@@ -1479,7 +1466,7 @@ async function getCallbackParameters(data) {
           }
         } else if (params[0]) {
           // JS
-          let param = params[0].replaceAll('\n', '').replaceAll('\t', '').replaceAll(' ', '');
+          const param = params[0].replaceAll('\n', '').replaceAll('\t', '').replaceAll(' ', '');
           if (param.split(new RegExp(regex)).length === 1 && param && param.trim() !== '') {
             req.add(param);
           }
@@ -1488,8 +1475,8 @@ async function getCallbackParameters(data) {
         // Response
         if (params[1] && params[1].includes(':')) {
           // TS
-          let typeParam = params[1].split(':')[1].toLocaleLowerCase();
-          let param = params[1]
+          const typeParam = params[1].split(':')[1].toLocaleLowerCase();
+          const param = params[1]
             .split(':')[0]
             .replaceAll('\n', '')
             .replaceAll('\t', '')
@@ -1514,7 +1501,7 @@ async function getCallbackParameters(data) {
           }
         } else if (params[1]) {
           // JS
-          let param = params[1].replaceAll('\n', '').replaceAll('\t', '').replaceAll(' ', '');
+          const param = params[1].replaceAll('\n', '').replaceAll('\t', '').replaceAll(' ', '');
           if (param.split(new RegExp(regex)).length === 1 && param && param.trim() !== '') {
             res.add(param);
           }
@@ -1523,8 +1510,8 @@ async function getCallbackParameters(data) {
         // Next middleware
         if (params[2] && params[2].includes(':')) {
           // TS
-          let typeParam = params[2].split(':')[1].toLocaleLowerCase();
-          let param = params[2]
+          const typeParam = params[2].split(':')[1].toLocaleLowerCase();
+          const param = params[2]
             .split(':')[0]
             .replaceAll('\n', '')
             .replaceAll('\t', '')
@@ -1537,14 +1524,12 @@ async function getCallbackParameters(data) {
             if (param.split(new RegExp(regex)).length === 1 && param && param.trim() !== '') {
               req.add(param);
             }
-          } else {
-            if (param.split(new RegExp(regex)).length === 1 && param && param.trim() !== '') {
-              next.add(param);
-            }
+          } else if (param.split(new RegExp(regex)).length === 1 && param && param.trim() !== '') {
+            next.add(param);
           }
         } else if (params[2]) {
           // JS
-          let param = params[2].replaceAll('\n', '').replaceAll('\t', '').replaceAll(' ', '');
+          const param = params[2].replaceAll('\n', '').replaceAll('\t', '').replaceAll(' ', '');
           if (param.split(new RegExp(regex)).length === 1 && param && param.trim() !== '') {
             next.add(param);
           }
@@ -1554,13 +1539,13 @@ async function getCallbackParameters(data) {
     return {
       req: [...req],
       res: [...res],
-      next: [...next]
+      next: [...next],
     };
   } catch (err) {
     return {
       req: [...req],
       res: [...res],
-      next: [...next]
+      next: [...next],
     };
   }
 }
@@ -1581,7 +1566,7 @@ async function getPathParameters(path, objParameters) {
       let cnt = 0;
       while (path.includes('{')) {
         name = await utils.stack0SymbolRecognizer(path, '{', '}');
-        path = path.split('{' + name + '}');
+        path = path.split(`{${name}}`);
         path = path.join('');
 
         if (!!objParameters[name] === false)
@@ -1592,15 +1577,15 @@ async function getPathParameters(path, objParameters) {
               in: 'path',
               required: true,
               schema: {
-                type: 'string'
-              }
+                type: 'string',
+              },
             };
           } else {
             objParameters[name] = {
               name,
               in: 'path',
               required: true,
-              type: 'string'
+              type: 'string',
             }; // by deafult 'type' is 'string'
           }
 
@@ -1611,9 +1596,8 @@ async function getPathParameters(path, objParameters) {
         }
       }
       return objParameters;
-    } else {
-      return objParameters;
     }
+    return objParameters;
   } catch (err) {
     return origObjParameters;
   }
@@ -1632,7 +1616,7 @@ async function functionRecognizerInData(data, functionName) {
   try {
     let func = null;
     functionName = functionName.split(
-      new RegExp('\\;|\\{|\\(|\\[|\\"|\\\'|\\`|\\}|\\)|\\]|\\:|\\,|\\*|\\+')
+      new RegExp('\\;|\\{|\\(|\\[|\\"|\\\'|\\`|\\}|\\)|\\]|\\:|\\,|\\*|\\+'),
     );
     if (functionName.length > 1) {
       functionName = functionName.filter(r => r != '');
@@ -1656,40 +1640,40 @@ async function functionRecognizerInData(data, functionName) {
       data = data.replaceAll(`.headers.${functionName}`, '____HEADERS____');
       data = data.replaceAll(
         new RegExp(`var\\s+\\n*\\t*\\{\\s*\\n*\\t*${functionName}`),
-        '____VARIABLE_DEST____'
+        '____VARIABLE_DEST____',
       );
       data = data.replaceAll(
         new RegExp(`let\\s+\\n*\\t*\\{\\s*\\n*\\t*${functionName}`),
-        '____VARIABLE_DEST____'
+        '____VARIABLE_DEST____',
       );
       data = data.replaceAll(
         new RegExp(`const\\s+\\n*\\t*\\{\\s*\\n*\\t*${functionName}`),
-        '____VARIABLE_DEST____'
+        '____VARIABLE_DEST____',
       );
       data = data.replaceAll(new RegExp(`\\,\\s*\\n*\\t*${functionName}`), '____VARIABLE____');
       data = data.replaceAll(
         new RegExp(`body\\s*\\n*\\t*\\.\\s*\\n*\\t*${functionName}`),
-        '____VARIABLE_BODY____'
+        '____VARIABLE_BODY____',
       );
       data = data.replaceAll(
         new RegExp(`query\\s*\\n*\\t*\\.\\s*\\n*\\t*${functionName}`),
-        '____VARIABLE_QUERY____'
+        '____VARIABLE_QUERY____',
       );
       data = data.replaceAll(
         new RegExp(`headers\\s*\\n*\\t*\\.\\s*\\n*\\t*${functionName}`),
-        '____VARIABLE_HEADERS____'
+        '____VARIABLE_HEADERS____',
       );
 
       data = data.split(new RegExp(`${functionName}`));
       if (data.length > 1) {
         for (let idxHeader = 1; idxHeader < data.length; ++idxHeader) {
-          let startComment = utils.getFirstPosition('/*', data[idxHeader].split('//')[0]);
-          let endComment = utils.getFirstPosition('*/', data[idxHeader].split('//')[0]);
+          const startComment = utils.getFirstPosition('/*', data[idxHeader].split('//')[0]);
+          const endComment = utils.getFirstPosition('*/', data[idxHeader].split('//')[0]);
           if ((endComment && !startComment) || startComment > endComment) {
             // keep in comment
-            data[idxHeader] = '____KEEP_NAME____' + data[idxHeader];
+            data[idxHeader] = `____KEEP_NAME____${data[idxHeader]}`;
           } else {
-            data[idxHeader] = `${functionName}` + data[idxHeader];
+            data[idxHeader] = `${functionName}${data[idxHeader]}`;
           }
         }
         data = data.join('');
@@ -1697,7 +1681,7 @@ async function functionRecognizerInData(data, functionName) {
         data = data[0];
       }
       data = data.split(
-        new RegExp(`\\w+${functionName}|${functionName}\\w+|\\w+${functionName}\\w+`)
+        new RegExp(`\\w+${functionName}|${functionName}\\w+|\\w+${functionName}\\w+`),
       );
       data = data.join('____FUNC____');
 
@@ -1714,8 +1698,8 @@ async function functionRecognizerInData(data, functionName) {
 
     let arrowFunction = data.split(
       new RegExp(
-        `(${functionName}\\s*\\n*\\t*\\:?\\s*\\n*\\t*\\w*\\s*\\n*\\t*\\=\\s*\\n*\\t*\\([\\s\\S]*\\)\\s*\\t*=>\\s*\\n*\\t*\\{)`
-      )
+        `(${functionName}\\s*\\n*\\t*\\:?\\s*\\n*\\t*\\w*\\s*\\n*\\t*\\=\\s*\\n*\\t*\\([\\s\\S]*\\)\\s*\\t*=>\\s*\\n*\\t*\\{)`,
+      ),
     );
     let arrowFunctionWithoutCurlyBracket = [''];
     let traditionalFunction = [''];
@@ -1724,15 +1708,15 @@ async function functionRecognizerInData(data, functionName) {
     if (arrowFunction.length == 1) {
       arrowFunctionWithoutCurlyBracket = data.split(
         new RegExp(
-          `(${functionName}\\s*\\n*\\t*\\:?\\s*\\n*\\t*\\w*\\s*\\n*\\t*\\=\\s*\\n*\\t*\\([\\s\\S]*\\)\\s*\\t*=>)`
-        )
+          `(${functionName}\\s*\\n*\\t*\\:?\\s*\\n*\\t*\\w*\\s*\\n*\\t*\\=\\s*\\n*\\t*\\([\\s\\S]*\\)\\s*\\t*=>)`,
+        ),
       );
       if (arrowFunctionWithoutCurlyBracket.length == 1) {
         // CASE:  foo: (req, res) => {
         arrowFunction = data.split(
           new RegExp(
-            `(${functionName}\\s*\\n*\\t*\\:?\\s*\\n*\\t*\\s*\\n*\\t*\\s*\\n*\\t*\\([\\s\\S]*\\)\\s*\\t*=>\\s*\\n*\\t*\\{)`
-          )
+            `(${functionName}\\s*\\n*\\t*\\:?\\s*\\n*\\t*\\s*\\n*\\t*\\s*\\n*\\t*\\([\\s\\S]*\\)\\s*\\t*=>\\s*\\n*\\t*\\{)`,
+          ),
         );
         if (arrowFunction.length > 1) {
           arrowFunctionType = 2;
@@ -1740,8 +1724,8 @@ async function functionRecognizerInData(data, functionName) {
           // Default: Traditional function
           traditionalFunction = data.split(
             new RegExp(
-              `(${functionName}\\s*\\n*\\t*\\:?\\s*\\n*\\t*\\=?\\s*\\n*\\t*\\([\\s\\S]*\\)\\s*\\n*\\t*\\:?\\s*\\n*\\t*\\w*\\s*\\n*\\t*\\<?\\s*\\n*\\t*\\w*\\s*\\n*\\t*\\>?\\s*\\n*\\t*\\{)`
-            )
+              `(${functionName}\\s*\\n*\\t*\\:?\\s*\\n*\\t*\\=?\\s*\\n*\\t*\\([\\s\\S]*\\)\\s*\\n*\\t*\\:?\\s*\\n*\\t*\\w*\\s*\\n*\\t*\\<?\\s*\\n*\\t*\\w*\\s*\\n*\\t*\\>?\\s*\\n*\\t*\\{)`,
+            ),
           );
           if (
             traditionalFunction.length == 1 &&
@@ -1769,10 +1753,10 @@ async function functionRecognizerInData(data, functionName) {
       isTraditionalFunction = true;
     } else {
       // CASE: exports.validateUser = [ ]
-      let array = data.split(new RegExp(`${functionName}\\s*\\n*\\t*=\\s*\\n*\\t*\\[`));
+      const array = data.split(new RegExp(`${functionName}\\s*\\n*\\t*=\\s*\\n*\\t*\\[`));
       if (array.length > 1) {
-        let resp = await utils.stackSymbolRecognizer(array[1], '(', ')');
-        return '[' + resp;
+        const resp = await utils.stackSymbolRecognizer(array[1], '(', ')');
+        return `[${resp}`;
       }
     }
 
@@ -1789,12 +1773,12 @@ async function functionRecognizerInData(data, functionName) {
         if (funcStr.includes('=')) {
           funcStr = funcStr.split('=')[1];
         }
-        funcStr = funcStr + '=> {';
+        funcStr += '=> {';
         let arrowFunc = func.split('=>')[1].trimLeft();
         arrowFunc = arrowFunc.split(new RegExp('\\n|\\s|\\t|\\;'));
         for (let idx = 0; idx < arrowFunc.length; idx++) {
           if (arrowFunc[idx] != '') {
-            let strRet = funcStr + arrowFunc[idx] + '}';
+            const strRet = `${funcStr + arrowFunc[idx]}}`;
             return strRet;
           }
           if (idx == arrowFunc.length - 1) {
@@ -1809,24 +1793,24 @@ async function functionRecognizerInData(data, functionName) {
         if (isArrowFunction && arrowFunctionType == 1) {
           funcStr = data.split(
             new RegExp(
-              `${functionName}\\s*\\n*\\t*\\:?\\s*\\n*\\t*\\w*\\s*\\n*\\t*\\=\\s*\\n*\\t*\\(`
-            )
+              `${functionName}\\s*\\n*\\t*\\:?\\s*\\n*\\t*\\w*\\s*\\n*\\t*\\=\\s*\\n*\\t*\\(`,
+            ),
           )[1];
         }
         if (isArrowFunction && arrowFunctionType == 2) {
           funcStr = data.split(
-            new RegExp(`${functionName}\\s*\\n*\\t*\\:?\\s*\\n*\\t*\\s*\\n*\\t*\\s*\\n*\\t*\\(`)
+            new RegExp(`${functionName}\\s*\\n*\\t*\\:?\\s*\\n*\\t*\\s*\\n*\\t*\\s*\\n*\\t*\\(`),
           )[1];
         } else if (isTraditionalFunction) {
           funcStr = data.split(
-            new RegExp(`${functionName}\\s*\\n*\\t*\\:?\\s*\\n*\\t*\\=?\\s*\\n*\\t*\\(`)
+            new RegExp(`${functionName}\\s*\\n*\\t*\\:?\\s*\\n*\\t*\\=?\\s*\\n*\\t*\\(`),
           )[1];
         }
 
         if (funcStr && funcStr.split('}').length > 1) {
           funcStr = funcStr.split('{')[0];
         }
-        funcStr = '(' + funcStr + (isArrowFunction ? ' { ' : ' => { '); // TODO: Verify case 'funcStr' with '=> =>'
+        funcStr = `(${funcStr}${isArrowFunction ? ' { ' : ' => { '}`; // TODO: Verify case 'funcStr' with '=> =>'
         let cleanedParams = funcStr.split(')')[0];
         cleanedParams = cleanedParams
           .split(',')
@@ -1834,8 +1818,8 @@ async function functionRecognizerInData(data, functionName) {
             return p.split('=')[0];
           })
           .join(',');
-        funcStr = cleanedParams + ')' + funcStr.split(')')[1];
-        let finalFunc = await utils.stackSymbolRecognizer(func, '{', '}');
+        funcStr = `${cleanedParams})${funcStr.split(')')[1]}`;
+        const finalFunc = await utils.stackSymbolRecognizer(func, '{', '}');
         return funcStr + finalFunc;
       } else {
         return null;
@@ -1858,21 +1842,21 @@ async function popFunction(data) {
   }
 
   try {
-    let arrowFunction = data.split(
-      new RegExp(`(\\s*\\n*\\t*\\([\\s\\S]*\\)\\s*\\t*=>\\s*\\n*\\t*\\{)`)
+    const arrowFunction = data.split(
+      new RegExp(`(\\s*\\n*\\t*\\([\\s\\S]*\\)\\s*\\t*=>\\s*\\n*\\t*\\{)`),
     ); // arrow function with '{' and '}'
     let arrowFunctionWithoutCurlyBracket = [''];
     let traditionalFunction = [''];
 
     if (arrowFunction.length == 1) {
       arrowFunctionWithoutCurlyBracket = data.split(
-        new RegExp(`(\\s*\\n*\\t*\\([\\s\\S]*\\)\\s*\\t*=>)`)
+        new RegExp(`(\\s*\\n*\\t*\\([\\s\\S]*\\)\\s*\\t*=>)`),
       ); // arrow function without '{' and '}'
       if (arrowFunctionWithoutCurlyBracket.length == 1) {
         traditionalFunction = data.split(
           new RegExp(
-            `(\\s*\\n*\\t*\\([\\s\\S]*\\)\\s*\\n*\\t*\\:?\\s*\\n*\\t*\\w*\\s*\\n*\\t*\\<?\\s*\\n*\\t*\\w*\\s*\\n*\\t*\\>?\\s*\\n*\\t*\\{)`
-          )
+            `(\\s*\\n*\\t*\\([\\s\\S]*\\)\\s*\\n*\\t*\\:?\\s*\\n*\\t*\\w*\\s*\\n*\\t*\\<?\\s*\\n*\\t*\\w*\\s*\\n*\\t*\\>?\\s*\\n*\\t*\\{)`,
+          ),
         ); // traditional function with '{' and '}'
       }
     }
@@ -1897,8 +1881,8 @@ async function popFunction(data) {
       params = await utils.stack0SymbolRecognizer(params, ')', '(');
 
       if (params) {
-        params = '(' + params.split('').reverse().join('') + ')';
-        signatureFunc = params + func[0].split(params)[1] + '{';
+        params = `(${params.split('').reverse().join('')})`;
+        signatureFunc = `${params + func[0].split(params)[1]}{`;
       } else {
         // TODO: verify case without '(' and ')'
         signatureFunc = '{';
@@ -1908,16 +1892,16 @@ async function popFunction(data) {
       func = func.join('{');
       func = signatureFunc + (await utils.stackSymbolRecognizer(func, '{', '}'));
       return func.trim();
-    } else if (isArrowFunctionWithoutCurlyBracket) {
-      let func = data.split('=>')[1].trimLeft();
-      let params = await utils.stack0SymbolRecognizer(data, '(', ')');
-      let paramsSubFunc = await utils.stack0SymbolRecognizer(func, '(', ')');
-      func = func.split(paramsSubFunc)[0];
-      func = '(' + params + ') => { ' + func + paramsSubFunc + ') }';
-      return func;
-    } else {
-      return null;
     }
+    if (isArrowFunctionWithoutCurlyBracket) {
+      let func = data.split('=>')[1].trimLeft();
+      const params = await utils.stack0SymbolRecognizer(data, '(', ')');
+      const paramsSubFunc = await utils.stack0SymbolRecognizer(func, '(', ')');
+      func = func.split(paramsSubFunc)[0];
+      func = `(${params}) => { ${func}${paramsSubFunc}) }`;
+      return func;
+    }
+    return null;
   } catch (err) {
     return null;
   }
@@ -1933,18 +1917,18 @@ function popString(data) {
   }
 
   try {
-    data = data.replaceAll('\\"', statics.STRING_BREAKER + '_quote1_' + statics.STRING_BREAKER);
-    data = data.replaceAll("\\'", statics.STRING_BREAKER + '_quote2_' + statics.STRING_BREAKER);
-    data = data.replaceAll('\\`', statics.STRING_BREAKER + '_quote3_' + statics.STRING_BREAKER);
+    data = data.replaceAll('\\"', `${statics.STRING_BREAKER}_quote1_${statics.STRING_BREAKER}`);
+    data = data.replaceAll("\\'", `${statics.STRING_BREAKER}_quote2_${statics.STRING_BREAKER}`);
+    data = data.replaceAll('\\`', `${statics.STRING_BREAKER}_quote3_${statics.STRING_BREAKER}`);
     data = data.replaceAll("'", '"');
     data = data.replaceAll('`', '"');
     data = data.split('"');
 
     if (data.length > 1) {
       let str = data[1];
-      str = str.replaceAll(statics.STRING_BREAKER + '_quote1_' + statics.STRING_BREAKER, '\\"');
-      str = str.replaceAll(statics.STRING_BREAKER + '_quote2_' + statics.STRING_BREAKER, "\\'");
-      str = str.replaceAll(statics.STRING_BREAKER + '_quote3_' + statics.STRING_BREAKER, '\\`');
+      str = str.replaceAll(`${statics.STRING_BREAKER}_quote1_${statics.STRING_BREAKER}`, '\\"');
+      str = str.replaceAll(`${statics.STRING_BREAKER}_quote2_${statics.STRING_BREAKER}`, "\\'");
+      str = str.replaceAll(`${statics.STRING_BREAKER}_quote3_${statics.STRING_BREAKER}`, '\\`');
       return str;
     }
     return null;
@@ -1969,5 +1953,5 @@ module.exports = {
   getSwaggerComments,
   popString,
   removeInsideParentheses,
-  dataConverter
+  dataConverter,
 };

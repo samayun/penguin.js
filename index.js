@@ -1,5 +1,8 @@
+/* eslint-disable no-console  */
+
 require('dotenv').config();
 const express = require('express');
+
 const app = express();
 const { host, port } = require('./config/server');
 
@@ -7,10 +10,12 @@ const connectDB = require('./database/connection');
 
 // SETUP MIDDLEWARES
 const setMiddlewares = require('./app/middlewares');
+
 setMiddlewares(app);
 
 // USING ROUTES from Routes Directory
-const setRoutes = require('./routes.js');
+const setRoutes = require('./routes');
+
 setRoutes(app);
 
 (async function main() {
@@ -25,8 +30,8 @@ setRoutes(app);
         '\x1b[47m\x1b[46m%s\x1b[0m',
         `🧠 Server running on 👀`,
         '\x1b[1m\x1b[5m',
-        `${host}:${port}`
-      )
+        `${host}:${port}`,
+      ),
     );
   } catch (error) {
     console.log(error || 'Server Down');

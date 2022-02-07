@@ -64,7 +64,7 @@ const tableStatusCodes_enUS = {
   508: 'Loop Detected',
   510: 'Not Extended',
   511: 'Network Authentication Required',
-  599: 'Network Connect Timeout Error'
+  599: 'Network Connect Timeout Error',
 };
 
 const tableStatusCodes_ptBR = {
@@ -114,7 +114,7 @@ const tableStatusCodes_ptBR = {
   508: 'Loop Detectado',
   510: 'Não Estendido',
   511: 'Requer Autenticação de Rede',
-  599: 'Erro de Tempo Limite de Conexão à Rede'
+  599: 'Erro de Tempo Limite de Conexão à Rede',
 };
 
 const tableStatusCodes_zhCN = {
@@ -165,7 +165,7 @@ const tableStatusCodes_zhCN = {
   508: '检测到循环',
   510: '不扩展',
   511: '需要网络验证',
-  599: '网络连接超时错误'
+  599: '网络连接超时错误',
 };
 
 const tableStatusCodes_ko = {
@@ -216,14 +216,14 @@ const tableStatusCodes_ko = {
   508: '루프 감지됨',
   510: '확장되지 않음',
   511: '네트워크 인증 필요',
-  599: '네트워크 연결 시간초과 오류'
+  599: '네트워크 연결 시간초과 오류',
 };
 
 const tableStatusCodes_frFR = {
   100: 'Continuer',
   101: 'Changement de Protocole',
   102: 'Traitement en Cours',
-  103: 'Early Hints', //todo
+  103: 'Early Hints', // todo
   200: 'OK',
   201: 'Créé',
   202: 'Accepté',
@@ -233,7 +233,7 @@ const tableStatusCodes_frFR = {
   206: 'Contenu Partiel',
   207: 'Multi-statuts',
   208: 'Déjà Signalé',
-  226: 'IM Used', //todo
+  226: 'IM Used', // todo
   300: 'Choix Multiples',
   301: 'Déplacé Définitivement',
   302: 'Trouvé',
@@ -285,7 +285,7 @@ const tableStatusCodes_frFR = {
   508: 'Boucle Détectée',
   510: 'Non Étendu',
   511: 'Authentification Réseau Requise',
-  599: 'Erreur Délai de Connexion au Réseau'
+  599: 'Erreur Délai de Connexion au Réseau',
 };
 
 // TODO: add other languages
@@ -294,20 +294,22 @@ function getHttpStatusDescription(statusCode, lang) {
   if (lang == 'pt-br') {
     // Portuguese - Brazil
     return tableStatusCodes_ptBR[statusCode];
-  } else if (lang == 'zh-cn') {
+  }
+  if (lang == 'zh-cn') {
     // Chinese (Simplified)
     return tableStatusCodes_zhCN[statusCode];
-  } else if (lang == 'ko') {
+  }
+  if (lang == 'ko') {
     // Korean
     return tableStatusCodes_ko[statusCode];
-  } else if (lang == 'fr') {
+  }
+  if (lang == 'fr') {
     // French
     return tableStatusCodes_frFR[statusCode];
-  } else {
-    return tableStatusCodes_enUS[statusCode]; // English by default
   }
+  return tableStatusCodes_enUS[statusCode]; // English by default
 }
 
 module.exports = {
-  getHttpStatusDescription
+  getHttpStatusDescription,
 };

@@ -4,7 +4,7 @@ const TEMPLATE = {
   info: {
     version: '1.0.0',
     title: 'REST API',
-    description: ''
+    description: '',
   },
   host: 'localhost:3000',
   servers: [],
@@ -16,7 +16,7 @@ const TEMPLATE = {
   produces: [],
   paths: {},
   definitions: {},
-  components: {}
+  components: {},
 };
 
 const SWAGGER_TAG = '#swagger';
@@ -30,5 +30,5 @@ module.exports = {
   STRING_BREAKER,
   METHODS,
   RESERVED_FUNCTIONS,
-  STRING_QUOTE
+  STRING_QUOTE,
 };

@@ -25,12 +25,12 @@ async function fileOrDirectoryExist(path) {
  */
 async function getExtension(fileName) {
   try {
-    let data = fileName.split('.').slice(-1)[0].toLowerCase();
+    const data = fileName.split('.').slice(-1)[0].toLowerCase();
     if (data == 'js' || data == 'ts' || data == 'jsx' || data == 'jsx') {
       return '';
     }
 
-    let extensios = ['.js', '.ts', '.jsx', '.tsx'];
+    const extensios = ['.js', '.ts', '.jsx', '.tsx'];
     for (let idx = 0; idx < extensios.length; ++idx) {
       if (fs.existsSync(fileName + extensios[idx])) {
         return extensios[idx];
@@ -128,7 +128,7 @@ function stack0SymbolRecognizer(data, startSymbol, endSymbol, keepSymbol = false
       }
 
       for (let idx = 0; idx < data.length; ++idx) {
-        let c = data[idx];
+        const c = data[idx];
 
         if (rec == 0 && c == startSymbol) rec = 1;
         if (c == startSymbol && rec == 1) stack += 1;
@@ -170,7 +170,7 @@ function resolvePatternPath(path) {
 
 function getFirstPosition(param, data) {
   if (data && param) {
-    let position = data.split(param).shift();
+    const position = data.split(param).shift();
     if (position.length == data.length) {
       return null;
     }
@@ -187,5 +187,5 @@ module.exports = {
   resolvePatternPath,
   stackSymbolRecognizer,
   stack0SymbolRecognizer,
-  getFirstPosition
+  getFirstPosition,
 };

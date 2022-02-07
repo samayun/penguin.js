@@ -1,6 +1,6 @@
+const { Parser } = require('acorn');
 const handleData = require('./handle-data');
 const utils = require('./utils');
-const { Parser } = require('acorn');
 
 /**
  * Getting the string until a character to be found.
@@ -54,8 +54,8 @@ function getVariablesNode(node) {
     let v = [];
     if (Array.isArray(node.body)) {
       for (let idx = 0; idx < node.body.length; ++idx) {
-        let e = node.body[idx];
-        let n = getVariablesNode(e);
+        const e = node.body[idx];
+        const n = getVariablesNode(e);
         if (Array.isArray(n)) {
           v = [...v, ...n];
         }
@@ -65,7 +65,8 @@ function getVariablesNode(node) {
       node.body.body.forEach(e => v.push(getVariablesNode(e)));
     }
     return v.filter(e => e);
-  } else if (node.type === 'VariableDeclaration') {
+  }
+  if (node.type === 'VariableDeclaration') {
     if (node.declarations[0].init.type != 'CallExpression') {
       return node;
     }
@@ -85,17 +86,17 @@ function getVariablesNode(node) {
  */
 function jsParser(data) {
   try {
-    let jsObj = { variables: [] };
+    const jsObj = { variables: [] };
     const parse = Parser.parse(data, { ecmaVersion: 2020 });
-    let variablesNode = getVariablesNode(parse);
+    const variablesNode = getVariablesNode(parse);
 
     // Get variables
     for (let idx = 0; idx < variablesNode.length; ++idx) {
-      let item = variablesNode[idx];
+      const item = variablesNode[idx];
       if (item && item.declarations && item.declarations[0].type === 'VariableDeclarator') {
-        let name = item.declarations[0].id.name;
-        let end = item.declarations[0].end; // bytePosition of the last byte
-        let value = resolveVariableValue(item.declarations[0].init, jsObj.variables);
+        const { name } = item.declarations[0].id;
+        const { end } = item.declarations[0]; // bytePosition of the last byte
+        const value = resolveVariableValue(item.declarations[0].init, jsObj.variables);
         jsObj.variables.push({ name, end, kind: item.kind, typeof: typeof value, value });
       }
     }
@@ -118,7 +119,7 @@ async function jsParserEsModule(data, onlyPrimitiveTypes = true) {
     let dataAux = data;
     dataAux = dataAux && dataAux.split(new RegExp('(const|let|var)(\\s+.*\\s*=\\s*)'));
     if (dataAux.length > 3) {
-      dataAux[0] = '/*' + dataAux[0] + '*/';
+      dataAux[0] = `/*${dataAux[0]}*/`;
       for (let idx = 3; idx < dataAux.length; idx += 3) {
         if (dataAux[idx - 1].substr(-1) == '=' && dataAux[idx][0] == '>') {
           // Arrow function
@@ -130,44 +131,43 @@ async function jsParserEsModule(data, onlyPrimitiveTypes = true) {
         if (varValue.split(/^null/).length > 1) {
           // null
           varValue = varValue.split(/^null/);
-          varValue = 'null\n/*' + varValue[1] + '*/\n';
+          varValue = `null\n/*${varValue[1]}*/\n`;
           dataAux[idx] = varValue;
         } else if (varValue.split(/^true/).length > 1) {
           // boolean
           varValue = varValue.split(/^true/);
-          varValue = 'true\n/*' + varValue[1] + '*/\n';
+          varValue = `true\n/*${varValue[1]}*/\n`;
           dataAux[idx] = varValue;
         } else if (varValue.split(/^false/).length > 1) {
           // boolean
           varValue = varValue.split(/^false/);
-          varValue = 'false\n/*' + varValue[1] + '*/\n';
+          varValue = `false\n/*${varValue[1]}*/\n`;
           dataAux[idx] = varValue;
         } else if (varValue.split(/^\d+/).length > 1) {
           // number
           varValue = varValue.split(/^(\d+)/);
-          varValue = `${varValue[1]}\n/*` + varValue[2] + '*/\n';
+          varValue = `${varValue[1]}\n/*${varValue[2]}*/\n`;
           dataAux[idx] = varValue;
         } else if (varValue.split(/^"|^'|^`/).length > 1) {
           // string
-          let symbol = varValue[0];
-          let str = await handleData.popString(varValue, true);
-          varValue =
-            `${symbol + str + symbol}\n/*` + varValue.split(symbol + str + symbol)[1] + '*/\n';
+          const symbol = varValue[0];
+          const str = await handleData.popString(varValue, true);
+          varValue = `${symbol + str + symbol}\n/*${varValue.split(symbol + str + symbol)[1]}*/\n`;
           dataAux[idx] = varValue;
         } else if (varValue.split(/^\[|^\{|^\[/).length > 1) {
           // object or array
-          let symbol = varValue[0];
-          let dat = await utils.stack0SymbolRecognizer(varValue, symbol, null, true);
-          varValue = `${dat}\n/*` + varValue.split(dat)[1] + '*/\n';
+          const symbol = varValue[0];
+          const dat = await utils.stack0SymbolRecognizer(varValue, symbol, null, true);
+          varValue = `${dat}\n/*${varValue.split(dat)[1]}*/\n`;
           dataAux[idx] = varValue;
         } else if (varValue.split(/^>/).length == 1) {
           if (onlyPrimitiveTypes) {
             dataAux[idx - 3] += '/*';
             dataAux[idx] += '*/\n';
           } else {
-            let varValueAux = varValue.split(/;|\n/);
+            const varValueAux = varValue.split(/;|\n/);
             if (varValueAux.length > 1) {
-              varValue = `${varValueAux[0]}\n/*` + varValue.split(varValueAux[0])[1] + '*/\n';
+              varValue = `${varValueAux[0]}\n/*${varValue.split(varValueAux[0])[1]}*/\n`;
               dataAux[idx] = varValue;
             }
           }
@@ -250,17 +250,17 @@ async function resolvePathVariables(rawPath, bytePosition, jsParsed, importedFil
       auxPath.shift();
       auxPath = [...auxPath, ...pathVariables];
       for (let index = 0; index < auxPath.length; ++index) {
-        let e = auxPath[index];
-        let varName = e.split(new RegExp('\\}|\\+\\"|\\+\'|\\+\\`'))[0];
+        const e = auxPath[index];
+        const varName = e.split(new RegExp('\\}|\\+\\"|\\+\'|\\+\\`'))[0];
         let varKey = varName.split('.')[0];
         let resolvedVariables = jsParsed.variables.filter(
-          v => v.name == varKey && v.end <= bytePosition
+          v => v.name == varKey && v.end <= bytePosition,
         );
-        let exportPath = null;
+        const exportPath = null;
         if (!resolvedVariables || resolvedVariables.length == 0) {
           // Variable in other file
-          let idx = importedFiles.findIndex(
-            e => e.varFileName && varKey && e.varFileName == varKey
+          const idx = importedFiles.findIndex(
+            e => e.varFileName && varKey && e.varFileName == varKey,
           );
           if (idx == -1) {
             // Second, tries to find in the 'exports' of import/require, such as 'foo' in the: import { foo } from './fooFile'
@@ -268,7 +268,7 @@ async function resolvePathVariables(rawPath, bytePosition, jsParsed, importedFil
               if (exportPath) {
                 return;
               }
-              let found =
+              const found =
                 imp && imp.exports
                   ? imp.exports.find(e => e.varName && varKey && e.varName == varKey)
                   : null;
@@ -277,16 +277,16 @@ async function resolvePathVariables(rawPath, bytePosition, jsParsed, importedFil
               }
             });
           } else {
-            let pathFile = importedFiles[idx].fileName;
-            let extension = await utils.getExtension(pathFile);
-            let fileContent = await utils.getFileContent(pathFile + extension);
+            const pathFile = importedFiles[idx].fileName;
+            const extension = await utils.getExtension(pathFile);
+            const fileContent = await utils.getFileContent(pathFile + extension);
             const jsExternalParsed = jsParser(await handleData.removeComments(fileContent, true));
             if (varName.includes('.')) {
               varKey = varName.split('.')[1];
             }
 
             resolvedVariables = jsExternalParsed.variables.filter(
-              v => v.name == varKey && v.end <= bytePosition
+              v => v.name == varKey && v.end <= bytePosition,
             );
           }
         }
@@ -299,7 +299,7 @@ async function resolvePathVariables(rawPath, bytePosition, jsParsed, importedFil
           if (varName.split('.').length > 1 && resolvedVariables[0].typeof == 'object') {
             value = searchInObject(
               resolvedVariables[0].value,
-              varName.split('.').slice(1).join('.')
+              varName.split('.').slice(1).join('.'),
             );
           } else {
             value = resolvedVariables[0].value;
@@ -309,9 +309,9 @@ async function resolvePathVariables(rawPath, bytePosition, jsParsed, importedFil
             // Just the variable in the path
             rawPath = value;
           } else {
-            rawPath = rawPath.replaceAll('${' + varName + '}', value);
-            rawPath = rawPath.replaceAll('+' + varName, '+' + value);
-            rawPath = rawPath.replaceAll(varName + '+', value + '+');
+            rawPath = rawPath.replaceAll(`\${${varName}}`, value);
+            rawPath = rawPath.replaceAll(`+${varName}`, `+${value}`);
+            rawPath = rawPath.replaceAll(`${varName}+`, `${value}+`);
           }
         }
       }
@@ -336,24 +336,27 @@ async function resolvePathVariables(rawPath, bytePosition, jsParsed, importedFil
 function resolveVariableValue(node, variables) {
   try {
     if (node.type === 'ObjectExpression') {
-      let v = {};
+      const v = {};
       if (Array.isArray(node.properties)) {
         for (let idx = 0; idx < node.properties.length; ++idx) {
-          let item = node.properties[idx];
-          let value = resolveVariableValue(item.value);
-          let name = item.key.name;
+          const item = node.properties[idx];
+          const value = resolveVariableValue(item.value);
+          const { name } = item.key;
           v[name] = value;
         }
       }
       return v;
-    } else if (node.type === 'BinaryExpression') {
-      let left = resolveVariableValue(node.left, variables);
-      let right = resolveVariableValue(node.right, variables);
+    }
+    if (node.type === 'BinaryExpression') {
+      const left = resolveVariableValue(node.left, variables);
+      const right = resolveVariableValue(node.right, variables);
       return left + right;
-    } else if (node.type === 'Literal') {
+    }
+    if (node.type === 'Literal') {
       if (typeof node.value === 'string') {
         return `${node.value}`;
-      } else if (typeof node.value === 'number') {
+      }
+      if (typeof node.value === 'number') {
         return node.value;
       }
     } else if (node.type === 'Identifier') {
@@ -377,15 +380,15 @@ function searchInObject(obj, property) {
     return obj;
   }
   try {
-    let value = property.split('.')[0];
-    let nextValue = property.split('.').slice(1).join('.');
+    const value = property.split('.')[0];
+    const nextValue = property.split('.').slice(1).join('.');
     if (obj[value]) {
       return searchInObject(obj[value], nextValue);
-    } else if (obj.value && obj.value[value]) {
-      return searchInObject(obj.value[value], nextValue);
-    } else {
-      return null;
     }
+    if (obj.value && obj.value[value]) {
+      return searchInObject(obj.value[value], nextValue);
+    }
+    return null;
   } catch (err) {
     return null;
   }
@@ -399,5 +402,5 @@ module.exports = {
   removeCharacter,
   resolvePathVariables,
   resolveVariableValue,
-  searchInObject
+  searchInObject,
 };
