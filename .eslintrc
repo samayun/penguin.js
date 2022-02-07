@@ -1,0 +1,29 @@
+{
+  "plugins": ["prettier"],
+  "extends": ["eslint:recommended", "plugin:prettier/recommended"],
+
+  "root": true,
+  "env": {
+    "node": true,
+    "jest": true,
+    "es6": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "createDefaultProgram": true
+  },
+
+  "rules": {
+    "comma-dangle": [2, "never"],
+    "max-len": [
+      2,
+      {
+        "code": 100,
+        "tabWidth": 2
+      }
+    ],
+    "semi": 2,
+    "keyword-spacing": 2,
+    "indent": [2, 2, { "SwitchCase": 1 }]
+  }
+}

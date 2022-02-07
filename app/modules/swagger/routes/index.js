@@ -4,7 +4,7 @@ const swaggerFile = require('../output/swagger_output.json');
 const router = require('express').Router();
 
 module.exports = () => {
-    router.use(swaggerUi.serve, swaggerUi.setup(swaggerFile));
+  router.use(swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
-    return router;
+  return router;
 };

@@ -1,4 +1,4 @@
-const { connection } = require("../../config/database");
+const { connection } = require('../../config/database');
 
 class CrudService extends require(`./crud/${connection}`) {
   constructor(model) {

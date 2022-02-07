@@ -14,18 +14,23 @@ const setRoutes = require('./routes.js');
 setRoutes(app);
 
 (async function main() {
-    try {
-        // Connect Database
-        const client = await connectDB();
-
-        console.log(client);
-        /*
-         * Listen to server
-         */
-        app.listen(port, () => console.log(`${host}:${port}`));
-    } catch (error) {
-        console.log(error || 'Server Down');
-    }
+  try {
+    // Connect Database
+    await connectDB();
+    /*
+     * Listen to server
+     */
+    app.listen(port, () =>
+      console.log(
+        '\x1b[47m\x1b[46m%s\x1b[0m',
+        `🧠 Server running on 👀`,
+        '\x1b[1m\x1b[5m',
+        `${host}:${port}`
+      )
+    );
+  } catch (error) {
+    console.log(error || 'Server Down');
+  }
 })();
 
 module.exports = app;

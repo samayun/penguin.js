@@ -1,23 +1,29 @@
 class MongoCrud {
-  constructor(model) {
-    this.Model = model;
+  constructor(Model) {
+    this.Model = Model;
   }
   async getAll() {
-    return await this.Model.find({});
+    return this.Model.find({});
   }
   async getOne(params) {
-    return await this.Model.findOne(params);
+    return this.Model.findOne(params);
   }
   async create(params) {
-    return await new this.Model(params).save();
+    return new this.Model(params).save();
   }
   async update(keys, params) {
-    const updated = await this.Model.findOneAndUpdate(key, {
-      $set: params,
-    });
+    const updated = await this.Model.findOneAndUpdate(
+      key,
+      {
+        $set: params
+      },
+      {
+        new: true
+      }
+    );
     return {
       ...updated._doc,
-      ...params,
+      ...params
     };
   }
   async deleteOne(key) {

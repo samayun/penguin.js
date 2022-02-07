@@ -1,3 +1,3 @@
-exports.API_VERSION = process.env.API_VERSION || 'v1';
+exports.apiVersion = process.env.apiVersion || 'v1';
 
-exports.API_ROUTE_PREFIX = process.env.API_ROUTE_PREFIX || '/api';
+exports.apiRoutePrefix = process.env.apiRoutePrefix || '/api';

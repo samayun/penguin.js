@@ -13,7 +13,7 @@ class MySQLCrud {
   }
   async update(keys, params) {
     return await this.Model.findOneAndUpdate(keys, {
-      $set: params,
+      $set: params
     });
   }
   async deleteOne(key) {

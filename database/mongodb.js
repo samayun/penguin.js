@@ -1,7 +1,7 @@
 const {
-  mongodb: { prefix, url, host, username, port, password, database, suffix },
-} = require("../config/database").connections;
-const mongoose = require("mongoose");
+  mongodb: { prefix, url, host, username, port, password, database, suffix }
+} = require('../config/database').connections;
+const mongoose = require('mongoose');
 
 module.exports = async function connectDB() {
   try {
