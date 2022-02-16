@@ -1,5 +1,7 @@
+/* eslint-disable import/no-unresolved */
 const router = require('express').Router();
 const swaggerUi = require('swagger-ui-express');
+
 const swaggerFile = require('../output/swagger_output.json');
 
 module.exports = () => {

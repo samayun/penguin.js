@@ -1,5 +1,3 @@
-// require("dotenv").config();
-
 const { JWT } = require('jwt-auth-helper');
 const router = require('express').Router();
 
