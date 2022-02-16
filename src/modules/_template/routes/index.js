@@ -5,7 +5,9 @@ module.exports = () => {
   router.get('/', (_, res) => {
     /* #swagger.tags = ['.template'] */
     return res.status(200).json({
+      success: true,
       message: 'Get all tests',
+      data: [],
     });
   });
 
