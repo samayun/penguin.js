@@ -7,4 +7,4 @@ public/**
 .eslintcache
 .DS_Store
 .eslintcache
-app/modules/swagger/output/swagger_output.json
+src/app/modules/swagger/output/swagger_output.json

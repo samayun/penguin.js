@@ -4,7 +4,7 @@
   "env": {
     "node": true
   },
-  "ignorePatterns": "app/modules/swagger/penguin-swagger-autogen",
+  "ignorePatterns": "src/app/modules/swagger/penguin-swagger-autogen",
   "rules": {
     "consistent-return": "off",
     "global-require": 0,
