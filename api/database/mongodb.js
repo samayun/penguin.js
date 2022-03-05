@@ -16,6 +16,11 @@ module.exports = async function connectDB() {
     }
 
     const options = { useNewUrlParser: true, useUnifiedTopology: true };
+
+    if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
+      console.log(`🧠 Connecting to ${uri}`);
+    }
     await mongoose.connect(uri, options);
     return Promise.resolve(`Database Connected`);
   } catch (error) {

@@ -25,7 +25,7 @@ setRoutes(app);
     /*
      * Listen to server
      */
-    await app.listen(port, host);
+    await app.listen(port);
     console.log(
       '\x1b[47m\x1b[46m%s\x1b[0m',
       `🧠 Server running on 👀`,

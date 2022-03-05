@@ -13,9 +13,13 @@ RUN npm install
 # Bundle app source
 COPY . .
 
-ENV DATABASE_URL mongodb://root:2021@localhost:27017/vod?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&ssl=false 
+ENV DB_NAME staging
+ENV DB_HOST cluster0.khadd.mongodb.net
+ENV DB_USER staging
+ENV DB_PASSWORD staging
+ENV JWT_SECRET_KEY Penguin
 ENV PORT 5000
 
 EXPOSE 5000
 
-CMD ["npm", "run", "start:dev"]
+CMD ["npm", "run", "start"]

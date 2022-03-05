@@ -1,0 +1,43 @@
+version: '3.3'
+
+services:
+  db:
+    image: mongo:4.4.1
+    container_name: penguin-db
+    restart: unless-stopped
+    volumes:
+      - ./docker/docker-volumes-data/db:/data/db
+    command: --serviceExecutor adaptive
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: penguin
+    ports:
+      - 27017:27017
+  mongo-express:
+    image: mongo-express:latest
+    container_name: penguin-db-viewer
+    restart: unless-stopped
+    environment:
+      ME_CONFIG_OPTIONS_EDITORTHEME: ambiance
+      ME_CONFIG_MONGODB_SERVER: db
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: password
+    ports:
+      - 8081:8081
+
+  api:
+    build:
+      context: ./api
+      dockerfile: ./Dockerfile.dev
+    restart: always
+    image: penguin-api:dev
+    container_name: penguin-api-dev
+    volumes:
+      - /home/node/app/node_modules
+      - ./api:/home/node/app
+    environment:
+      CHOKIDAR_USEPOLLING: 'true'
+      env_file: ./.env
+    ports:
+      - 5000:5000

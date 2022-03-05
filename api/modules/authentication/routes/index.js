@@ -70,7 +70,7 @@ module.exports = () => {
     }
   });
 
-  router.get('/users', authenticate, async (req, res, next) => {
+  router.get('/users', async (req, res, next) => {
     try {
       res.json({
         status: 'success',
