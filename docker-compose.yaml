@@ -26,7 +26,7 @@ services:
     ports:
       - 8081:8081
 
-  api:
+  nodeserver:
     build:
       context: ./api
       dockerfile: ./Dockerfile.dev
@@ -41,3 +41,15 @@ services:
       env_file: ./.env
     ports:
       - 5000:5000
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: backoffice-router:dev
+    container_name: penguin-proxy
+    restart: unless-stopped
+    environment:
+      LOGSPOUT: ignore
+    ports:
+      - 80:80

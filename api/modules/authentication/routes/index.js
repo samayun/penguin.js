@@ -1,7 +1,7 @@
 const { JWT } = require('jwt-auth-helper');
 const router = require('express').Router();
 
-const authService = require('../services/authService');
+const authService = require('../services/AuthService');
 const authenticate = require('../../../app/middlewares/isAuth');
 const { registerValidator, loginValidator } = require('../validator/auth.validator');
 
@@ -11,11 +11,12 @@ const path = '/v1/auth';
 
 module.exports = () => {
   router.post('/login', loginValidator, async (req, res, next) => {
-    /* #swagger.tags = ['Authentication']
+    /* 
+      #swagger.tags = ['Authentication']
      	#swagger.basePath = '/v1/auth'
-        #swagger.description = 'Sign in a specific user'
+      #swagger.description = 'Sign in a specific user'
 
-        	#swagger.parameters['obj'] = {
+      #swagger.parameters['obj'] = {
             in: 'body',
             description: 'User information.',
             required: true,
@@ -26,14 +27,16 @@ module.exports = () => {
         email: req.body.email,
         password: req.body.password,
       });
-      // generate access token
+
       const accessToken = await jwt.generateJWTToken({ ...user });
 
       res.json({
-        status: 'success',
+        success: true,
         message: `${user.name} logged in successfully`,
-        data: user,
-        accessToken,
+        data: {
+          user,
+          accessToken,
+        },
       });
     } catch (error) {
       next(error);
@@ -48,35 +51,29 @@ module.exports = () => {
       // generate access token
       const accessToken = await jwt.generateJWTToken({ ...user });
 
-      res.json({
-        status: 'success',
-        message: `${user.name} register successfully`,
-        data: accessToken,
-      });
+      res.json({ success: true, message: `${user.name} register successfully`, data: accessToken });
     } catch (error) {
       next(error);
     }
   });
 
   router.get('/profile', authenticate, async (req, res, next) => {
+    // #swagger.tags = ['Authentication']
     try {
-      res.json({
-        status: 'success',
-        message: `Valid profile`,
-        data: await authService.profile(req.user.email),
-      });
+      const data = await authService.profile(req.user.email);
+
+      res.json({ success: true, message: `Auth profile`, data });
     } catch (error) {
       next(error);
     }
   });
 
   router.get('/users', async (req, res, next) => {
+    // #swagger.tags = ['Authentication']
     try {
-      res.json({
-        status: 'success',
-        message: `Valid profile`,
-        data: await authService.getUsers(),
-      });
+      const data = await authService.getUsers();
+
+      res.json({ success: true, message: `Get all users`, data });
     } catch (error) {
       next(error);
     }

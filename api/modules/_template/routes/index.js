@@ -1,18 +1,24 @@
-const path = '/v1/tests';
-const router = require('express').Router();
+const testService = require('../service/TestService');
 
 module.exports = () => {
-  router.get('/', (_, res) => {
+  const path = '/v1/tests';
+  const router = require('express').Router();
+
+  router.get('/', async (_, res) => {
     /* #swagger.tags = ['.template'] */
-    return res.status(200).json({
-      success: true,
-      message: 'Get all tests',
-      data: [],
-    });
+    const data = await testService.getTests();
+
+    return res.status(200).json({ success: true, message: 'Get all tests', data });
   });
 
-  return {
-    path,
-    router,
-  };
+  router.post('/', async (req, res) => {
+    /* #swagger.tags = ['.template'] */
+    const data = await testService.create({
+      title: req.body.title,
+    });
+
+    return res.status(200).json({ success: true, message: 'create test', data });
+  });
+
+  return { path, router };
 };

@@ -28,14 +28,11 @@ Architect an express.js application
 # Copy .env.example to .env
  cp .env.example .env
 
-# make storage link
- mkdir public
-
 # Build container image
  make build
 
 # Run containers
- make run
+ make logs
 
 ```
 

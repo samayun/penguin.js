@@ -21,7 +21,7 @@ destroy:
 	sudo docker-compose down --volumes
 
 lint:
-	sudo docker-compose exec api npm lint
+	sudo docker-compose exec nodeserver npm lint
 
 start:
 	sudo docker-compose up --detach
@@ -33,4 +33,4 @@ shell:
 	sudo docker-compose exec api bash
 	
 logs:
-	sudo docker-compose logs --follow api
+	sudo docker-compose logs --follow nodeserver
