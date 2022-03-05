@@ -21,6 +21,8 @@ RUN npm install
 # Bundle app source
 COPY . .
 
+ENV HOST penguin.localhost
+
 ENV DATABASE_URL mongodb://admin:password@db:27017/admin
 # ENV PORT 5000
 

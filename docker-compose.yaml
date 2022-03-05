@@ -41,13 +41,12 @@ services:
       env_file: ./.env
     ports:
       - 5000:5000
-
   nginx:
     build:
       context: ./nginx
       dockerfile: Dockerfile
-    image: backoffice-router:dev
-    container_name: penguin-proxy
+    image: nginx
+    container_name: penguin-reverse-proxy
     restart: unless-stopped
     environment:
       LOGSPOUT: ignore

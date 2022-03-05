@@ -30,13 +30,13 @@ setRoutes(app);
       '\x1b[47m\x1b[46m%s\x1b[0m',
       `🧠 Server running on 👀`,
       '\x1b[1m\x1b[5m',
-      `http://${host}:${port}`,
+      `http://${host}`,
     );
     console.log(
       '\x1b[46m\x1b[46m%s\x1b[2m',
       `🧠 Swagger documentation is here  👀`,
       '\x1b[1m\x1b[5m',
-      `http://${host}:${port}/docs`,
+      `http://${host}/docs`,
     );
   } catch (error) {
     console.log(error || 'Server Down');
