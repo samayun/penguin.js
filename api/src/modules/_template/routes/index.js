@@ -15,6 +15,7 @@ module.exports = () => {
     /* #swagger.tags = ['.template'] */
     const data = await testService.create({
       title: req.body.title,
+      category: req.body.category,
     });
 
     return res.status(200).json({ success: true, message: 'create test', data });

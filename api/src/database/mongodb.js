@@ -1,3 +1,5 @@
+require('denormalize-mongoose')();
+
 const mongoose = require('mongoose');
 
 const {
