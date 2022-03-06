@@ -2,13 +2,12 @@
 const Category = require('../model/Category.model');
 
 class CategoryService {
-  Model = Category;
   async create(params) {
-    return this.Model.create(params);
+    return Category.create(params);
   }
 
   async findMany() {
-    return this.Model.find({});
+    return Category.find({});
   }
 }
 

@@ -1,4 +1,7 @@
+dist
 package-lock.json
 .env
 node_modules
 npm-debug.log
+.vscode
+.husky

@@ -38,7 +38,7 @@ services:
       - ./api:/home/node/app
     environment:
       CHOKIDAR_USEPOLLING: 'true'
-      env_file: ./.env
+      env_file: ./api/.env
     ports:
       - 1000:1000
   nginx:
