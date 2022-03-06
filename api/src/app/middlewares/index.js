@@ -1,6 +1,5 @@
-const express = require('express');
 const cors = require('cors');
-const fileUpload = require('express-fileupload');
+const express = require('express');
 
 const middlewares = [
   cors(),
@@ -9,7 +8,7 @@ const middlewares = [
     limit: '2048mb',
     extended: false,
   }),
-  fileUpload(),
+
   express.static('public'),
   express.static('uploads'),
 ];

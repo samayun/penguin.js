@@ -1,26 +1,28 @@
 /* eslint-disable no-unused-expressions  */
 // import Routes from modules or global place
-const modules = require('./modules');
+const loadModules = require('./modules');
 const swaggerModule = require('./app/modules/swagger/routes');
 const { swaggerRoutePrefix, apiRoutePrefix } = require('./config/api');
 
 const routes = [
   {
-    name: 'modules',
+    name: 'Dynamic Modules',
     type: 'module',
-    handler: modules,
+    prefix: apiRoutePrefix,
+    handler: loadModules,
   },
 
   {
     path: '/',
     handler: (req, res) => {
       res.json({
-        message: 'All is well 🐦',
+        status: 'All is well 🐦',
         site: 'Penguin.js monolithic framework',
         docs: `http://${req.headers.host}${swaggerRoutePrefix}`,
         author: {
           name: 'Samayun Miah Chowdhury',
           email: 'samayun.m.chowdhury@gmail.com',
+          github: 'https://github.com/samayun',
           linkedin: 'https://www.linkedin.com/in/samayun',
         },
       });
@@ -72,7 +74,7 @@ module.exports = app => {
       const handlers = route.handler();
 
       handlers.routers.forEach(({ path, router }) => {
-        app.use(`${apiRoutePrefix}${path}`, router);
+        app.use(`${route.prefix}${path}`, router);
       });
     } else if (route.path) {
       // rest routes for RESTful API
