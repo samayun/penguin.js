@@ -10,8 +10,7 @@
     "build": "npm run swagger",
     "swagger": "cd src && node swagger.js",
     "lint": "eslint --ext .js --cache --fix --ignore-path ../.gitignore .",
-    "format": "prettier --write \"./**/*.js\"",
-    "prepare": "npx husky install"
+    "format": "prettier --write \"./**/*.js\""
   },
   "keywords": [
     "nodejs-framework",

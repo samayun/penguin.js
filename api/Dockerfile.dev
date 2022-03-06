@@ -2,6 +2,8 @@ FROM node:lts-slim
 
 ENV NODE_ENV=development
 
+RUN npm install -g npm@8.5.3
+
 USER node
 
 RUN mkdir -p /home/node/app
@@ -27,5 +29,7 @@ ENV DATABASE_URL mongodb://admin:password@db:27017/admin
 # ENV PORT 1000
 
 EXPOSE 1000
+
+
 
 CMD ["npm", "run", "dev"]
