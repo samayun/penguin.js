@@ -40,7 +40,7 @@ services:
       CHOKIDAR_USEPOLLING: 'true'
       env_file: ./.env
     ports:
-      - 5000:5000
+      - 1000:1000
   nginx:
     build:
       context: ./nginx

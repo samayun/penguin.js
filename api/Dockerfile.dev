@@ -24,8 +24,8 @@ COPY . .
 ENV HOST penguin.localhost
 
 ENV DATABASE_URL mongodb://admin:password@db:27017/admin
-# ENV PORT 5000
+# ENV PORT 1000
 
-EXPOSE 5000
+EXPOSE 1000
 
 CMD ["npm", "run", "dev"]
