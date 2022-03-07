@@ -8,24 +8,20 @@ const { host, port } = require('./config/server');
 
 const connectDB = require('./database/connection');
 
-// SETUP MIDDLEWARES
-const setMiddlewares = require('./app/middlewares');
+const loadMiddlewares = require('./app/middlewares');
 
-setMiddlewares(app);
-
-// USING ROUTES from Routes Directory
-const setRoutes = require('./routes');
-
-setRoutes(app);
+const loadDynamicRoutes = require('./routes');
 
 (async function main() {
   try {
-    // Connect Database
     await connectDB();
-    /*
-     * Listen to server
-     */
+
+    loadMiddlewares(app);
+
+    loadDynamicRoutes(app);
+
     await app.listen(port);
+
     console.log(
       '\x1b[47m\x1b[46m%s\x1b[0m',
       `🧠 Server running on 👀`,
@@ -39,7 +35,7 @@ setRoutes(app);
       `http://${host}/docs`,
     );
   } catch (error) {
-    console.log(error || 'Server Down');
+    console.log(error.message || 'Server Down');
   }
 })();
 

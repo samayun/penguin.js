@@ -10,14 +10,17 @@ const modelSchema = new Schema(
     category: {
       type: Denormalize,
       of: Schema.Types.ObjectId,
-      suffix: 'SomeEnding',
-      paths: ['title'],
+      paths: ['title', 'description'],
       ref: 'Category',
+      // suffix: "Denormalize", if we give a suffix, it will be added to the end of the field name eg: categoryDenormalize
+    },
+    categoryData: {
+      _id: Schema.Types.ObjectId,
+      title: String,
+      description: String,
     },
   },
   { timestamps: true },
 );
-
-// modelSchema.plugin(denormalizePlugin);
 
 module.exports = model('Test', modelSchema);

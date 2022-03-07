@@ -46,19 +46,24 @@ const routes = [
   {
     name: 'Error Boundary',
     path: '*',
-    handler: (error, req, res) => {
+    // eslint-disable-next-line no-unused-vars
+    handler: (error, req, res, next) => {
+      let code;
       if (error.status === 404) {
+        code = 404;
         return res
-          .status(404)
+          .status(code)
           .json({ success: false, message: 'Something went wrong 😢', data: null });
       }
       // eslint-disable-next-line no-console
-      process.env.NODE_ENV === 'development' && console.error(error.message);
+      // process.env.NODE_ENV === 'development' && console.error(error.message);
 
-      return res.json({
+      return res.status(code || 500).json({
+        success: false,
         name: error.name || 'Error Ocurred 😢',
         message: error.message || 'Internal Server Error 😢',
-        status: error.status || 500,
+        code: error.status || 500,
+        data: null,
       });
     },
   },
