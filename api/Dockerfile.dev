@@ -30,6 +30,4 @@ ENV DATABASE_URL mongodb://admin:password@db:27017/admin
 
 EXPOSE 1000
 
-
-
 CMD ["npm", "run", "dev"]
