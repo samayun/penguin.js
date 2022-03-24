@@ -5,7 +5,7 @@
   "scripts": {
     "start": "npm run build && node src/index",
     "watch:app": "npm run build && nodemon -L src/index --ignore node_modules",
-    "watch:routes": "SHELL=/bin/bash chokidar \"./src/modules/**/routes/*.js\" -c \"npm run swagger\"",
+    "watch:routes": "SHELL=/bin/bash chokidar \"./src/**/**/routes/*.js\" -c \"npm run swagger\"",
     "dev": "concurrently npm:watch:*",
     "build": "npm run swagger",
     "swagger": "cd src && node swagger.js",

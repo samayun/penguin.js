@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-const Provider = require('../model/Provider.model');
+const Provider = require('../../../models/Provider.model');
 
 class ProviderService {
   async create(params) {

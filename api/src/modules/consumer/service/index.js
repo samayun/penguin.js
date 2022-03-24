@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-const Consumer = require('../model/Consumer.model');
+const Consumer = require('../../../models/Consumer.model');
 
 class ConsumerService {
   async create(params) {

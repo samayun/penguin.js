@@ -1,3 +1,5 @@
+const { Types } = require('mongoose');
+
 module.exports = () => {
   const path = '/v1/consumers';
   const router = require('express').Router();
@@ -18,8 +20,10 @@ module.exports = () => {
     /* #swagger.tags = ['consumer'] */
     try {
       const data = await service.create({
-        title: req.body.title,
-        description: req.body.description,
+        consumerTitle: req.body.consumerTitle,
+        provider: {
+          _id: new Types.ObjectId(req.body.providerId),
+        },
       });
 
       return res.status(200).json({ success: true, message: 'create ', data });

@@ -1,5 +1,3 @@
-const { Types } = require('mongoose');
-
 module.exports = () => {
   const path = '/v1/providers';
   const router = require('express').Router();
@@ -20,8 +18,12 @@ module.exports = () => {
     /* #swagger.tags = ['provider'] */
     try {
       const data = await service.create({
-        title: req.body.title,
-        category: new Types.ObjectId(req.body.category),
+        // title: req.body.title,
+        providerTitle: req.body.providerTitle,
+        auth: {
+          name: req.body.name,
+          phone: req.body.phone,
+        },
       });
 
       return res.status(200).json({ success: true, message: 'create provider', data });
@@ -34,8 +36,11 @@ module.exports = () => {
     /* #swagger.tags = ['provider'] */
     try {
       const data = await service.update(req.params.id, {
-        title: req.body.title,
-        category: new Types.ObjectId(req.body.category),
+        providerTitle: req.body.providerTitle,
+        auth: {
+          name: req.body.name,
+          phone: req.body.phone,
+        },
       });
 
       return res.status(200).json({ success: true, message: 'update provider', data });
