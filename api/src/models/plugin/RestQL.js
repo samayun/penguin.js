@@ -69,31 +69,50 @@ const consumer = ops => {
       if (!provider) {
         return next(new Error(`Denormalization failed for ${key}`));
       }
-
-      const schemaFeilds = Object.keys(schema.paths);
-
-      console.log({ consumerCreateschemaFeilds: schemaFeilds });
-
+      const parseAliasMapToMongooseMap = {};
       if (as) {
-        const aliasParsedObject = {};
+        /**
+         *  as: {
+                copyName: 'auth.name',
+                copyPhone: 'auth.phone',
+                pTitle: 'providerTitle',
+            },
+            parseAliasMapToMongooseMap: {
+                'provider.copyName': 'provider.auth.name',
+                'provider.copyPhone': 'provider.auth.phone',
+                'provider.pTitle': 'provider.providerTitle'
+            }
+         */
+
         Object.entries(as).map(function ([key, value]) {
           const aliasKey = inArray ? `${toPath}.$.${key}` : `${toPath}.${key}`;
-          aliasParsedObject[key] = provider[value];
-          console.log(`provider value ${provider[value]}`);
+          const aliasValue = inArray ? `${toPath}.$.${value}` : `${toPath}.${value}`;
+          parseAliasMapToMongooseMap[aliasKey] = aliasValue;
         });
-        // const excludeObjectValuesMap = flattenObj(as);
-        // const providerObject = mergeExludedAliasValues(excludeObjectValuesMap, provider);
-        // console.log({ providerObject });
       }
 
-      schemaFeilds.forEach(k => {
+      const consumerParsedSchemaObj = {};
+      Object.entries(schema.paths).map(function ([key, value]) {
+        const aliasKey = inArray ? `${toPath}.$.${key}` : `${toPath}.${key}`;
+        const aliasValue = inArray ? `${toPath}.$.${value}` : `${toPath}.${value}`;
+        consumerParsedSchemaObj[aliasKey] = aliasValue;
+      });
+
+      console.log({
+        parseAliasMapToMongooseMap,
+        consumerParsedSchemaObj,
+        provider,
+      });
+
+      Object.keys(consumerParsedSchemaObj).forEach(k => {
         console.log({ k });
         console.log('provider[k] ', provider[k]);
 
         this[k] = provider[k];
         console.log('this[k] ', this[k]);
       });
-
+      console.log('provider DATA ', provider);
+      console.log('as  ', as);
       next();
     });
 
@@ -150,7 +169,7 @@ const consumer = ops => {
         const denormalizeKey = inArray ? `${toPath}.$.denormalizedAt` : `${toPath}.denormalizedAt`;
         updateFlattenData[denormalizeKey] = new Date().toISOString();
       }
-      console.log('START');
+
       console.log({ consumerCreateschemaFeilds: schemaFeilds });
       console.log({ provider: updateFlattenData });
       console.log({ flattenPublishedData });
@@ -188,27 +207,12 @@ const consumer = ops => {
         });
         console.log({ merged });
 
-        const mergedUpdatedData = await ConsumerModel.findOneAndUpdate(
-          filterQuery,
-          { $set: merged },
-          { new: true },
-        );
-        console.log({ mergedUpdatedData });
-
-        // const excludeObjectValuesMap = flattenObj(as);
-        // const providerObject = mergeExludedAliasValues(excludeObjectValuesMap, provider);
-        // console.log({ providerObject });
+        return ConsumerModel.updateMany(filterQuery, { $set: merged }, { new: true });
       }
-      console.log('STOP');
 
       console.log({ updateFlattenData });
 
-      const consumerUpdatedData = await ConsumerModel.findOneAndUpdate(
-        filterQuery,
-        { $set: updateFlattenData },
-        { new: true },
-      );
-      console.log({ consumerUpdatedData });
+      return ConsumerModel.updateMany(filterQuery, { $set: updateFlattenData }, { new: true });
     });
   };
 };

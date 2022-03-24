@@ -1,3 +1,5 @@
+const { Types } = require('mongoose');
+
 module.exports = () => {
   const path = '/v1/categories';
   const router = require('express').Router();
@@ -20,6 +22,9 @@ module.exports = () => {
       const data = await service.create({
         title: req.body.title,
         description: req.body.description,
+        parent: {
+          _id: new Types.ObjectId(req.body.parentId),
+        },
       });
 
       return res.status(200).json({ success: true, message: 'create categories', data });
