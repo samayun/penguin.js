@@ -67,7 +67,7 @@ Architect an express.js application
 - Language: ↪️ [Node.js](https://nodejs.org/en) as JS server side runtime
 - Framework: ↪️ [Express.js](https://expressjs.com) as web framework
 - Database: ↪️ [MongoDB](https://www.mongodb.com) as NoSQL Database
-- Documentation: ↪️ [Swagger](https://swagger.io)
+- Documentation: ↪️ [Swagger-AutoGen](https://github.com/davibaltar/swagger-autogen)
 
 </details>
 
