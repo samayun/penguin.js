@@ -30,7 +30,7 @@ stop:
 	sudo docker-compose stop
 
 shell:
-	sudo docker-compose exec api bash
+	sudo docker-compose exec nodeserver bash
 	
 logs:
 	sudo docker-compose logs --follow nodeserver

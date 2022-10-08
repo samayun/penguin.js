@@ -1,43 +1,45 @@
 const { Types } = require('mongoose');
 
 module.exports = () => {
-  const path = '/v1/consumers';
+  const path = '/v1/tags';
   const router = require('express').Router();
-  const service = require('../service');
+  const service = require('../repository');
 
   router.get('/', async (req, res, next) => {
-    /* #swagger.tags = ['consumer'] */
+    /* #swagger.tags = ['Blog'] */
     try {
       const data = await service.findMany();
 
-      return res.status(200).json({ success: true, message: 'Get all ', data });
+      return res.status(200).json({ success: true, message: 'Get all categories', data });
     } catch (error) {
       next(new Error(error.message));
     }
   });
 
   router.post('/', async (req, res, next) => {
-    /* #swagger.tags = ['consumer'] */
+    /* #swagger.tags = ['Blog'] */
     try {
       const data = await service.create({
-        consumerTitle: req.body.consumerTitle,
-        provider: {
-          _id: new Types.ObjectId(req.body.providerId),
+        title: req.body.title,
+        category: {
+          _id: new Types.ObjectId(req.body.category),
         },
       });
 
-      return res.status(200).json({ success: true, message: 'create ', data });
+      return res.status(200).json({ success: true, message: 'create categories', data });
     } catch (error) {
       next(new Error(error.message));
     }
   });
 
   router.put('/:id', async (req, res, next) => {
-    /* #swagger.tags = ['consumer'] */
+    /* #swagger.tags = ['Blog'] */
     try {
       const data = await service.update(req.params.id, {
         title: req.body.title,
-        description: req.body.description,
+        category: {
+          _id: new Types.ObjectId(req.body.category),
+        },
       });
 
       return res.status(200).json({ success: true, message: 'update', data });
@@ -47,7 +49,7 @@ module.exports = () => {
   });
 
   router.delete('/:id', async (req, res, next) => {
-    /* #swagger.tags = ['consumer'] */
+    /* #swagger.tags = ['Blog'] */
     try {
       const data = await service.delete(req.params.id);
 
@@ -58,7 +60,7 @@ module.exports = () => {
   });
 
   router.delete('/bulk', async (req, res, next) => {
-    /* #swagger.tags = ['consumer'] */
+    /* #swagger.tags = ['Blog'] */
     try {
       const data = await service.deleteBulk();
 

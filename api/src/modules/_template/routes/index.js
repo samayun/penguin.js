@@ -3,7 +3,7 @@ const { Types } = require('mongoose');
 module.exports = () => {
   const path = '/v1/tests';
   const router = require('express').Router();
-  const service = require('../service/TestService');
+  const service = require('../repository');
 
   router.get('/', async (req, res, next) => {
     try {

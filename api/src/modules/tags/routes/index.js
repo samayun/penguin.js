@@ -1,73 +1,72 @@
+const { Types } = require('mongoose');
+
 module.exports = () => {
-  const path = '/v1/providers';
+  const path = '/v1/tags';
   const router = require('express').Router();
-  const service = require('../service');
+  const service = require('../repository');
 
   router.get('/', async (req, res, next) => {
+    /* #swagger.tags = ['Tag'] */
     try {
-      /* #swagger.tags = ['provider'] */
       const data = await service.findMany();
 
-      return res.status(200).json({ success: true, message: 'Get all providers', data });
+      return res.status(200).json({ success: true, message: 'Get all categories', data });
     } catch (error) {
       next(new Error(error.message));
     }
   });
 
   router.post('/', async (req, res, next) => {
-    /* #swagger.tags = ['provider'] */
+    /* #swagger.tags = ['Tag'] */
     try {
       const data = await service.create({
-        // title: req.body.title,
-        providerTitle: req.body.providerTitle,
-        auth: {
-          name: req.body.name,
-          phone: req.body.phone,
+        title: req.body.title,
+        category: {
+          _id: new Types.ObjectId(req.body.category),
         },
       });
 
-      return res.status(200).json({ success: true, message: 'create provider', data });
+      return res.status(200).json({ success: true, message: 'create categories', data });
     } catch (error) {
       next(new Error(error.message));
     }
   });
 
   router.put('/:id', async (req, res, next) => {
-    /* #swagger.tags = ['provider'] */
+    /* #swagger.tags = ['Tag'] */
     try {
       const data = await service.update(req.params.id, {
-        providerTitle: req.body.providerTitle,
-        auth: {
-          name: req.body.name,
-          phone: req.body.phone,
+        title: req.body.title,
+        category: {
+          _id: new Types.ObjectId(req.body.category),
         },
       });
 
-      return res.status(200).json({ success: true, message: 'update provider', data });
+      return res.status(200).json({ success: true, message: 'update', data });
     } catch (error) {
       next(new Error(error.message));
     }
   });
 
   router.delete('/:id', async (req, res, next) => {
-    /* #swagger.tags = ['provider'] */
+    /* #swagger.tags = ['Tag'] */
     try {
       const data = await service.delete(req.params.id);
 
-      return res.status(200).json({ success: true, message: 'delete provider', data });
+      return res.status(200).json({ success: true, message: 'delete', data });
     } catch (error) {
       next(new Error(error.message));
     }
   });
 
   router.delete('/bulk', async (req, res, next) => {
-    /* #swagger.tags = ['provider'] */
+    /* #swagger.tags = ['Tag'] */
     try {
       const data = await service.deleteBulk();
 
       return res.status(200).json({ success: true, message: 'delete all ', data });
     } catch (error) {
-      next(new Error('FAILED'));
+      next(new Error(error.message));
     }
   });
 

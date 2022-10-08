@@ -1,9 +1,7 @@
-const { Types } = require('mongoose');
-
 module.exports = () => {
   const path = '/v1/categories';
   const router = require('express').Router();
-  const service = require('../service/CategoryService');
+  const service = require('../repository/CategoryRepository');
 
   router.get('/', async (req, res, next) => {
     /* #swagger.tags = ['Category'] */
@@ -21,10 +19,7 @@ module.exports = () => {
     try {
       const data = await service.create({
         title: req.body.title,
-        description: req.body.description,
-        parent: {
-          _id: new Types.ObjectId(req.body.parentId),
-        },
+        avatar: req.body.avatar,
       });
 
       return res.status(200).json({ success: true, message: 'create categories', data });
@@ -38,7 +33,7 @@ module.exports = () => {
     try {
       const data = await service.update(req.params.id, {
         title: req.body.title,
-        description: req.body.description,
+        avatar: req.body.avatar,
       });
 
       return res.status(200).json({ success: true, message: 'update', data });
