@@ -5,7 +5,7 @@ on: [push, workflow_dispatch]
 jobs:
   lint-test:
     name: Check lint test
-    if: "!contains(github.ref, 'master')"
+    if: ${{ !contains(github.ref, 'staging') && !contains(github.ref, 'master') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
