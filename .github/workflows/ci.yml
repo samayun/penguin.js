@@ -9,4 +9,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: echo "🎨 Running Lint script" && cd api && npm install && npm run lint
+      # - run: echo "🎨 Running Lint script" && cd api && npm install && npm run lint &&  echo "✅ hurray, application follows standard convention"
+      - run: |
+          echo "✅ Running lint scripts"
+          cd api
+          npm install
+          npm run test
+          echo "✅ hurray, application follows standard convention"
+
+  unit-test:
+    name: Check Unit test
+    if: contains( github.ref, 'staging')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      # - run: echo "🎨 Running Lint script" && cd api && npm install && npm run lint &&  echo "✅ hurray, application follows standard convention"
+      - run: |
+          echo "✅ Running automatic test scripts"
+          cd api
+          npm install
+          npm run test
+          echo "✅ hurray, application is bug free"
