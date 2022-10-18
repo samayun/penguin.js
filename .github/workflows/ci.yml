@@ -10,7 +10,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: install node dependencies & check lint convention
-      - run: echo "🎨 Running Lint script" && cd api && npm install && npm run lint
+      # - run: echo "🎨 Running Lint script" && cd api && npm install && npm run lint
+      - run: |
+          echo "✅ Running lint scripts
+          cd api
+          npm install
+          npm run test
+          echo "✅ hurray, application follows standard convention
 
   unit-test:
     name: Check Unit test
