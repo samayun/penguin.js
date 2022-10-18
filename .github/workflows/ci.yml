@@ -13,4 +13,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: echo "🎨 Running Lint script" && cd api && npm ci && npm run lint
+      - run: echo "🎨 Running Lint script" && cd api && ls && npm install && npm run lint
