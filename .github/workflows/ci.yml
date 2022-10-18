@@ -32,12 +32,29 @@ jobs:
 
   staging-build-push:
     name: Staging build & push
-    if: ${{ contains(github.ref, 'development')}}
+    if: ${{ contains(github.ref, 'staging')}}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - run: |
           echo "🎨 Build docker image & push on registry"
+          cd api/
+          cp .env.example .env
+          sed -i "/^APP_NAME=/c\APP_NAME=PenguinProject" .env
+          sed -i "/^HOST=/c\HOST=api.penguin.com" .env
+          export
+          cat .env
+          ls
+          echo "✅ DONE "
+
+  staging-deploy:
+    name: Staging Deploy
+    if: ${{ contains(github.ref, 'staging')}}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          echo "🎨 Deploy container"
           cd api/
           cp .env.example .env
           sed -i "/^APP_NAME=/c\APP_NAME=PenguinProject" .env
