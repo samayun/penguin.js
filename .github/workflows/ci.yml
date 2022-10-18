@@ -7,7 +7,7 @@ jobs:
     name: Check lint test
     if: ${{ !contains(github.ref, 'staging') && !contains(github.ref, 'master') }}
     container: node:lts-slim
-    runs-on: node:lts-slim
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - run: |
@@ -19,7 +19,7 @@ jobs:
 
   unit-test:
     name: Check Unit test
-    if: ${{ !contains(github.ref, 'staging') && !contains(github.ref, 'master') }}
+    if: ${{ contains(github.ref, 'staging')}}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -29,3 +29,19 @@ jobs:
           npm install
           npm run test
           echo "✅ hurray, application is bug free"
+
+  staging-build-push:
+    name: Check Unit test
+    if: ${{ contains(github.ref, 'development')}}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          echo "🎨 Build docker image & push on registry"
+          cd api/
+          cp .env.example .env
+          sed -i "/^HOST=/c\HOST=${HOST_STAGING}" .env
+          export
+          ls
+          cat .env
+          echo "✅ DONE "
