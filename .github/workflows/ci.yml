@@ -13,7 +13,7 @@ jobs:
       - run: echo "🎨 Running Lint script" && cd api && npm install && npm run lint
 
   unit-test:
-    name: Check lint test
+    name: Check Unit test
     if: contains( github.ref, 'staging')
     runs-on: ubuntu-latest
     steps:
