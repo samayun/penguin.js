@@ -6,10 +6,9 @@ jobs:
   lint-test:
     name: Check lint test
     if: ${{ !contains(github.ref, 'staging') && !contains(github.ref, 'master') }}
-    runs-on: ubuntu-latest
+    container: node:lts-slim
     steps:
       - uses: actions/checkout@v3
-      # - run: echo "🎨 Running Lint script" && cd api && npm install && npm run lint &&  echo "✅ hurray, application follows standard convention"
       - run: |
           echo "🎨 Running lint scripts"
           cd api
@@ -23,7 +22,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      # - run: echo "🎨 Running Lint script" && cd api && npm install && npm run lint &&  echo "✅ hurray, application follows standard convention"
       - run: |
           echo "🎨 Running automatic test scripts"
           cd api
