@@ -7,6 +7,7 @@ jobs:
     name: Check lint test
     if: ${{ !contains(github.ref, 'staging') && !contains(github.ref, 'master') }}
     container: node:lts-slim
+    runs-on: node:lts-slim
     steps:
       - uses: actions/checkout@v3
       - run: |

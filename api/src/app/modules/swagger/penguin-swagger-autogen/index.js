@@ -26,10 +26,10 @@ module.exports = function (args) {
   swaggerTags.setLanguage(recLang || options.language || 'en-US');
   swaggerTags.setOpenAPI(options.openapi);
   swaggerTags.setDisableLogs(options.disableLogs);
-  /** 
-  * SemibasePath is based on Penguin routing system.. where every route file returns an object like: { path: '/v1/categories', router: {...} }
-  * setApiDefaultBasepath: if it is true then add ('/api') prefix on these path  { path: '/api/v1/categories', router: {...} }
-  **/
+  /**
+   * SemibasePath is based on Penguin routing system.. where every route file returns an object like: { path: '/v1/categories', router: {...} }
+   * setApiDefaultBasepath: if it is true then add ('/api') prefix on these path  { path: '/api/v1/categories', router: {...} }
+   **/
   return async (outputFile, endpointsFiles, data, semibasePath, setApiDefaultBasepath = false) => {
     try {
       if (!outputFile) throw console.error("\nError: 'outputFile' was not specified.");
@@ -109,10 +109,10 @@ module.exports = function (args) {
         }
 
         const obj = await handleFiles.readEndpointFile(filePath, '', relativePath, []);
-        /** 
-        * SemibasePath is based on Penguin routing system.. where every route file returns an object like: { path: '/v1/categories', router: {...} }
-        * setApiDefaultBasepath: if it is true then add ('/api') prefix on these path  { path: '/api/v1/categories', router: {...} }
-        **/
+        /**
+         * SemibasePath is based on Penguin routing system.. where every route file returns an object like: { path: '/v1/categories', router: {...} }
+         * setApiDefaultBasepath: if it is true then add ('/api') prefix on these path  { path: '/api/v1/categories', router: {...} }
+         **/
         // TODO:PenguinJS basePath implementaion
 
         if (semibasePath) {
