@@ -12,11 +12,11 @@ jobs:
       - name: install node dependencies & check lint convention
       # - run: echo "🎨 Running Lint script" && cd api && npm install && npm run lint
       - run: |
-          echo "✅ Running lint scripts
+          echo "✅ Running lint scripts"
           cd api
           npm install
           npm run test
-          echo "✅ hurray, application follows standard convention
+          echo "✅ hurray, application follows standard convention"
 
   unit-test:
     name: Check Unit test
@@ -26,8 +26,8 @@ jobs:
       - uses: actions/checkout@v3
       - name: install node dependencies & check lint convention
       - run: |
-          echo "✅ Running automatic test scripts
+          echo "✅ Running automatic test scripts"
           cd api
           npm install
           npm run test
-          echo "✅ hurray, application is bug free
+          echo "✅ hurray, application is bug free"
