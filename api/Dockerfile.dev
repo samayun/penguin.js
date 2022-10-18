@@ -2,7 +2,7 @@ FROM node:lts-slim
 
 ENV NODE_ENV=development
 
-RUN npm install -g npm@8.5.3
+RUN npm install -g npm@8.19.2
 
 USER node
 
@@ -22,11 +22,6 @@ RUN npm install
 # RUN npm ci --only=production
 # Bundle app source
 COPY . .
-
-ENV HOST penguin.localhost
-
-ENV DATABASE_URL mongodb://admin:password@db:27017/admin
-# ENV PORT 1000
 
 EXPOSE 1000
 

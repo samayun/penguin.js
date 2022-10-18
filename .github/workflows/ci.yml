@@ -1,0 +1,14 @@
+name: '▶️ CI/CD for penguin'
+
+# on:
+#   push:
+#     branches:
+#       - master
+
+jobs:
+  lint-test:
+    name: Check lint test
+    # if: contains( github.ref, 'development')
+    steps:
+      - uses: actions/checkout@v2
+      - run: echo "🎨 Running Lint script" && cd api && npm run lint
