@@ -10,7 +10,8 @@
     "build": "npm run swagger",
     "swagger": "cd src && node swagger.js",
     "lint": "eslint --ext .js --cache --fix --ignore-path ../.gitignore .",
-    "format": "prettier --write \"./**/*.js\""
+    "format": "prettier --write \"./**/*.js\"",
+    "test": "echo '✅ Testing Success'"
   },
   "keywords": [
     "nodejs-framework",

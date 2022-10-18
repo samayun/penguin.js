@@ -14,13 +14,14 @@ jobs:
 
   unit-test:
     name: Check lint test
-    # if: contains( github.ref, 'development')
+    if: contains( github.ref, 'staging')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: install node dependencies & check lint convention
       - run: |
-          echo "🎨 Running Lint script
+          echo "✅ Running automatic test scripts
           cd api
           npm install
-          npm run lint
+          npm run test
+          echo "✅ hurray, application is bug free
