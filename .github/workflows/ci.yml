@@ -31,7 +31,7 @@ jobs:
           echo "✅ hurray, application is bug free"
 
   staging-build-push:
-    name: Check Unit test
+    name: Staging build & push
     if: ${{ contains(github.ref, 'development')}}
     runs-on: ubuntu-latest
     steps:
@@ -40,8 +40,9 @@ jobs:
           echo "🎨 Build docker image & push on registry"
           cd api/
           cp .env.example .env
-          sed -i "/^HOST=/c\HOST=${HOST_STAGING}" .env
+          sed -i "/^APP_NAME=/c\APP_NAME=PenguinProject" .env
+          sed -i "/^HOST=/c\HOST=api.penguin.com" .env
           export
-          ls
           cat .env
+          ls
           echo "✅ DONE "
