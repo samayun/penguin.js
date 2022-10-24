@@ -31,7 +31,7 @@ jobs:
       - name: repo-sync
         uses: repo-sync/github-sync@v2
         with:
-          source_repo: 'org/repo'
+          source_repo: 'git@gitlab.com:samayun.m.chowdhury/penguin.git'
           source_branch: 'master'
           destination_branch: 'master'
           github_token: ${{ secrets.GH_TOKEN }}
