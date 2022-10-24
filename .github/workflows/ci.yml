@@ -1,32 +1,32 @@
-name: '▶️ CI/CD'
+# name: '▶️ CI/CD'
 
-on: [push, workflow_dispatch]
+# on: [push, workflow_dispatch]
 
-jobs:
-  lint-test:
-    name: Check lint test
-    if: ${{ !contains(github.ref, 'staging') && !contains(github.ref, 'master') }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      # - run: echo "🎨 Running Lint script" && cd api && npm install && npm run lint &&  echo "✅ hurray, application follows standard convention"
-      - run: |
-          echo "🎨 Running lint scripts"
-          cd api
-          npm install
-          npm run lint
-          echo "✅ hurray, application follows standard convention"
+# jobs:
+#   lint-test:
+#     name: Check lint test
+#     if: ${{ !contains(github.ref, 'staging') && !contains(github.ref, 'master') }}
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v3
+#       # - run: echo "🎨 Running Lint script" && cd api && npm install && npm run lint &&  echo "✅ hurray, application follows standard convention"
+#       - run: |
+#           echo "🎨 Running lint scripts"
+#           cd api
+#           npm install
+#           npm run lint
+#           echo "✅ hurray, application follows standard convention"
 
-  unit-test:
-    name: Check Unit test
-    if: ${{ !contains(github.ref, 'staging') && !contains(github.ref, 'master') }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      # - run: echo "🎨 Running Lint script" && cd api && npm install && npm run lint &&  echo "✅ hurray, application follows standard convention"
-      - run: |
-          echo "🎨 Running automatic test scripts"
-          cd api
-          npm install
-          npm run test
-          echo "✅ hurray, application is bug free"
+#   unit-test:
+#     name: Check Unit test
+#     if: ${{ !contains(github.ref, 'staging') && !contains(github.ref, 'master') }}
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v3
+#       # - run: echo "🎨 Running Lint script" && cd api && npm install && npm run lint &&  echo "✅ hurray, application follows standard convention"
+#       - run: |
+#           echo "🎨 Running automatic test scripts"
+#           cd api
+#           npm install
+#           npm run test
+#           echo "✅ hurray, application is bug free"
