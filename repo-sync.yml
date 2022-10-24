@@ -1,38 +1,17 @@
-# File: .github/workflows/repo-sync.yml
-name: Mirroring
+# .github/workflows/git-sync.yml
 
-on: [push]
-
+on: push
 jobs:
-  repo-sync:
+  git-sync:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: git-sync
+        uses: wei/git-sync@v3
         with:
-          persist-credentials: false
-
-      - name: repo-sync
-        uses: repo-sync/github-sync@v2
-        with:
-          source_repo: 'git@github.com:samayun/mirror-test.git'
-          source_branch: 'master'
-          destination_branch: 'master'
-          github_token: ${{ secrets.PAT }}
-          sync_tags: 'true'
-# name: Mirroring
-
-# on: [push]
-
-# jobs:
-#   to_gitlab:
-#     runs-on: ubuntu-latest
-#     steps: # <-- must use actions/checkout before mirroring!
-#       - uses: actions/checkout@v2
-#         with:
-#           fetch-depth: 0
-#       - uses: pixta-dev/repository-mirroring-action@v1
-#         with:
-#           target_repo_url: git@gitlab.com:samayun.m.chowdhury/penguin.git
-#           ssh_private_key: # <-- use 'secrets' to pass credential information.
-#             ${{ secrets.SSH_PRIVATE_KEY }}
-#           ssh_username: samayun.m.chowdhury
+          source_repo: 'source_org/repository'
+          source_branch: 'main'
+          destination_repo: 'destination_org/repository'
+          destination_branch: 'main'
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }} # optional
+          source_ssh_private_key: ${{ secrets.SOURCE_SSH_PRIVATE_KEY }} # optional, will override `SSH_PRIVATE_KEY`
+          destination_ssh_private_key: ${{ secrets.DESTINATION_SSH_PRIVATE_KEY }}
