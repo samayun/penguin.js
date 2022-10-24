@@ -14,3 +14,4 @@ jobs:
           target_repo_url: git@gitlab.com:samayun.m.chowdhury/penguin.git
           ssh_private_key: # <-- use 'secrets' to pass credential information.
             ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh_username: samayun.m.chowdhury
