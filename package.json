@@ -1,0 +1,38 @@
+{
+  "name": "penguin",
+  "version": "0.0.1",
+  "description": "Penguin is a modern nodejs framework provides common features which helps to develop products rapidly ",
+  "bin": "./bin/install.js",
+  "main": "./api/dist/index.js",
+  "scripts": {
+    "link": "sudo npm link",
+    "semantic-release": "semantic-release",
+    "npm:login": "npm login --registry=https://registry.npmjs.org/",
+    "npm:login:github": "npm login --registry=https://npm.pkg.github.com/",
+    "npm:publish": "npm publish"
+    
+  },
+  "keywords": [
+    "nodejs",
+    "docker",
+    "express",
+    "mongodb",
+    "clean-architecture",
+    "nodejs-framework",
+    "nodejs-boilerplate",
+    "express-framework"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samayun/penguin.js.git"
+  },
+  "author": "Samayun Chowdhury",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/samayun/penguin.js/issues"
+  },
+  "homepage": "https://github.com/samayun/penguin.js#readme",
+  "devDependencies": {
+    "semantic-release": "^19.0.5"
+  }
+}

@@ -19,6 +19,22 @@ Architect an express.js application
 
 <!-- ![NODE.JS](https://viitorcloud.com/blog/wp-content/uploads/2018/06/Node-JS-App-Development-for-Business-cover.jpg) -->
 
+## Installation
+
+#### from npm
+
+```bash
+npx penguin YOUR_PROEJECT_NAME
+```
+
+#### from git
+
+```bash
+git clone --depth 1 https://github.com/samayun/penguin.js.git YOUR_PROEJECT_NAME
+
+cd YOUR_PROEJECT_NAME
+```
+
 ## Commands and Usage
 
 ```bash
