@@ -1,5 +1,5 @@
 {
-  "name": "penguin",
+  "name": "penguin-cli",
   "version": "0.0.1",
   "description": "Penguin is a modern nodejs framework provides common features which helps to develop products rapidly ",
   "bin": "./bin/install.js",
