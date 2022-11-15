@@ -2,7 +2,7 @@ FROM node:lts-slim
 
 ENV NODE_ENV=development
 
-RUN npm install -g npm@8.19.2
+RUN npm install --global npm
 
 USER node
 
@@ -15,9 +15,8 @@ WORKDIR /home/node/app
 # where available (npm@5+)
 COPY package*.json ./
 
-# RUN npm install -g npm@latest
-
 RUN npm install
+
 # If you are building your code for production
 # RUN npm ci --only=production
 # Bundle app source
